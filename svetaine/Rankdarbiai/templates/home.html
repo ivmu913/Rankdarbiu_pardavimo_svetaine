@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+
+{% block title %}Home{% endblock %}
+
+{% block content %}
+    <div class="jumbotron">
+        <h1 class="display-4">Добро пожаловать на наш сайт!</h1>
+        <p class="lead">Здесь вы можете продавать и покупать уникальные изделия ручной работы.</p>
+        <hr class="my-4">
+        <p>Подробнее о нашем сервисе...</p>
+        <a class="btn btn-primary btn-lg" href="/about/" role="button">Узнать больше</a>
+    </div>
+
+    <div class="row">
+        <div class="col-md-4">
+            <h2>Категория 1</h2>
+            <p>Описание категории 1.</p>
+            <a class="btn btn-secondary" href="#" role="button">Перейти &raquo;</a>
+        </div>
+        <div class="col-md-4">
+            <h2>Категория 2</h2>
+            <p>Описание категории 2.</p>
+            <a class="btn btn-secondary" href="#" role="button">Перейти &raquo;</a>
+        </div>
+        <div class="col-md-4">
+            <h2>Категория 3</h2>
+            <p>Описание категории 3.</p>
+            <a class="btn btn-secondary" href="#" role="button">Перейти &raquo;</a>
+        </div>
+    </div>
+{% endblock %}
