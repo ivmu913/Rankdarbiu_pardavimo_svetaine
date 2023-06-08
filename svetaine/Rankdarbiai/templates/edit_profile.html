@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+{% block title %}Redaguoti Profilį{% endblock %}
+
+{% block content %}
+    <h1 class="mt-4">Redaguoti Profilį</h1>
+    <form>
+        <div class="form-group">
+            <label for="name">Vardas</label>
+            <input type="text" class="form-control" id="name" placeholder="Įveskite savo vardą">
+        </div>
+        <div class="form-group">
+            <label for="email">El. paštas</label>
+            <input type="email" class="form-control" id="email" placeholder="Įveskite savo el. paštą">
+        </div>
+        <div class="form-group">
+            <label for="address">Adresas</label>
+            <input type="text" class="form-control" id="address" placeholder="Įveskite naują adresą">
+        </div>
+        <div class="form-group">
+            <label for="phone">Telefonas</label>
+            <input type="text" class="form-control" id="phone" placeholder="Įveskite naują telefono numerį">
+        </div>
+        <button type="submit" class="btn btn-primary">Atnaujinti Profilį</button>
+    </form>
+{% endblock %}

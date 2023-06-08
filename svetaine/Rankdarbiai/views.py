@@ -12,6 +12,20 @@ def home(request):
     }
     return render(request, 'home.html', context)
 
+def about(request):
+    return render(request, 'about.html')
+
+def contact(request):
+    return render(request, 'contact.html')
+
+def register(request):
+    # jūsų registracijos logika
+    return render(request, 'register.html')
+
+def products(request):
+    # jūsų kūrinių atvaizdavimo logika
+    return render(request, 'products.html')
+
 
 def product_detail(request, product_id):
     product = get_object_or_404(Product, id=product_id)

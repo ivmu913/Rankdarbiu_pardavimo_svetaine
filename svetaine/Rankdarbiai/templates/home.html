@@ -1,31 +1,44 @@
 {% extends 'base.html' %}
 
-{% block title %}Home{% endblock %}
-
 {% block content %}
-    <div class="jumbotron">
-        <h1 class="display-4">Добро пожаловать на наш сайт!</h1>
-        <p class="lead">Здесь вы можете продавать и покупать уникальные изделия ручной работы.</p>
-        <hr class="my-4">
-        <p>Подробнее о нашем сервисе...</p>
-        <a class="btn btn-primary btn-lg" href="/about/" role="button">Узнать больше</a>
-    </div>
+  <div class="jumbotron">
+    <h1>Sveiki atvykę į mano svetainę!</h1>
+    <p>Esame didžiausia rankų darbo kūrinių rinkmena Lietuvoje.</p>
+    <a href="{% url 'products' %}" class="btn btn-primary">Peržiūrėti kūrinius</a>
+  </div>
 
-    <div class="row">
-        <div class="col-md-4">
-            <h2>Категория 1</h2>
-            <p>Описание категории 1.</p>
-            <a class="btn btn-secondary" href="#" role="button">Перейти &raquo;</a>
-        </div>
-        <div class="col-md-4">
-            <h2>Категория 2</h2>
-            <p>Описание категории 2.</p>
-            <a class="btn btn-secondary" href="#" role="button">Перейти &raquo;</a>
-        </div>
-        <div class="col-md-4">
-            <h2>Категория 3</h2>
-            <p>Описание категории 3.</p>
-            <a class="btn btn-secondary" href="#" role="button">Перейти &raquo;</a>
-        </div>
+  <div class="row">
+    <div class="col-md-6">
+      <h2>Kodėl rinktis rankų darbo kūrinius?</h2>
+      <p>Rankų darbo kūriniai yra unikalūs, sukuriami su meile ir dėmesiu smulkmenoms. Jie atspindi meistriškumą ir kūrėjo asmenybę.</p>
     </div>
+    <div class="col-md-6">
+      <h2>Mūsų paslaugos</h2>
+      <ul>
+        <li>Platus rankų darbo kūrinių pasirinkimas</li>
+        <li>Individualūs užsakymai ir asmeninės konsultacijos</li>
+        <li>Saugus ir patikimas pristatymas</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-md-12">
+      <h2>Naujausi kūriniai</h2>
+      <div class="card-deck">
+        {% for product in latest_products %}
+          <div class="card">
+            <img src="{{ product.image.url }}" class="card-img-top" alt="{{ product.title }}">
+            <div class="card-body">
+              <h5 class="card-title">{{ product.title }}</h5>
+              <p class="card-text">{{ product.description }}</p>
+            </div>
+            <div class="card-footer">
+              <a href="{% url 'product_detail' product.id %}" class="btn btn-primary">Detaliau</a>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
 {% endblock %}

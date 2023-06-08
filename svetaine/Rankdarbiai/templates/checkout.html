@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+
+{% block title %}Apmokėjimas{% endblock %}
+
+{% block content %}
+    <h1 class="mt-4">Apmokėjimas</h1>
+    <p>Užpildykite žemiau esančią formą, kad užbaigtumėte apmokėjimą.</p>
+    <form>
+        <div class="form-group">
+            <label for="name">Vardas</label>
+            <input type="text" class="form-control" id="name" placeholder="Įveskite savo vardą">
+        </div>
+        <div class="form-group">
+            <label for="email">El. paštas</label>
+            <input type="email" class="form-control" id="email" placeholder="Įveskite savo el. paštą">
+        </div>
+        <div class="form-group">
+            <label for="address">Adresas</label>
+            <input type="text" class="form-control" id="address" placeholder="Įveskite pristatymo adresą">
+        </div>
+        <div class="form-group">
+            <label for="payment">Apmokėjimo metodas</label>
+            <select class="form-control" id="payment">
+                <option>Pasirinkite apmokėjimo metodą</option>
+                <option>Banko pavedimu</option>
+                <option>Kreditine kortele</option>
+                <option>PayPal</option>
+            </select>
+        </div>
+        <button type="submit" class="btn btn-primary">Patvirtinti Apmokėjimą</button>
+    </form>
+{% endblock %}

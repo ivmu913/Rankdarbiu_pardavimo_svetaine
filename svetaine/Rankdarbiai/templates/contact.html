@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+
+{% block title %}Kontaktai{% endblock %}
+
+{% block content %}
+    <h1 class="mt-4">Kontaktai</h1>
+    <p>Jei turite klausimų ar norite su mumis susisiekti, prašome užpildyti žemiau esančią formą arba naudoti kitus pateiktus kontaktinius duomenis.</p>
+    <form>
+        <div class="form-group">
+            <label for="name">Vardas</label>
+            <input type="text" class="form-control" id="name" placeholder="Įveskite savo vardą">
+        </div>
+        <div class="form-group">
+            <label for="email">El. paštas</label>
+            <input type="email" class="form-control" id="email" placeholder="Įveskite savo el. paštą">
+        </div>
+        <div class="form-group">
+            <label for="message">Žinutė</label>
+            <textarea class="form-control" id="message" rows="5" placeholder="Įveskite savo žinutę"></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary">Siųsti</button>
+    </form>
+    <hr>
+    <p>Papildomi kontaktiniai duomenys:</p>
+    <ul>
+        <li>Telefonas: +370 12345678</li>
+        <li>El. paštas: info@example.com</li>
+        <li>Adresas: 123 gatvė, Vilnius, Lietuva</li>
+    </ul>
+{% endblock %}
