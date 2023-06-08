@@ -1,35 +1,42 @@
 {% extends 'base.html' %}
 
-{% block title %}Krepšelis{% endblock %}
-
 {% block content %}
-    <h1 class="mt-4">Krepšelis</h1>
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Prekė</th>
-                <th>Kiekis</th>
-                <th>Kaina</th>
-                <th>Viso</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td>Produktas 1</td>
-                <td>2 vnt.</td>
-                <td>€10</td>
-                <td>€20</td>
-            </tr>
-            <tr>
-                <td>Produktas 2</td>
-                <td>3 vnt.</td>
-                <td>€15</td>
-                <td>€45</td>
-            </tr>
-        </tbody>
-    </table>
-    <div class="text-right">
-        <h4>Viso: €65</h4>
-        <a href="#" class="btn btn-primary">Užbaigti Užsakymą</a>
+    <div class="container">
+        <h1 class="mt-4 mb-3">Krepšelis</h1>
+
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Pavadinimas</th>
+                    <th>Kiekis</th>
+                    <th>Kaina</th>
+                    <th>Suma</th>
+                    <th>Veiksmai</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in cart_items %}
+                    <tr>
+                        <td>{{ item.product.title }}</td>
+                        <td>{{ item.quantity }}</td>
+                        <td>{{ item.product.price }}</td>
+                        <td>
+                            <form action="{% url 'remove_from_cart' item.product.id %}" method="POST">
+                                {% csrf_token %}
+                                <button class="btn btn-sm btn-danger" type="submit">Pašalinti</button>
+                            </form>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <p class="lead">Bendra suma: {{ total }}</p>
+
+        <form action="{% url 'payment' %}" method="POST">
+            {% csrf_token %}
+            <button class="btn btn-primary" type="submit">Apmokėti</button>
+        </form>
     </div>
 {% endblock %}
+

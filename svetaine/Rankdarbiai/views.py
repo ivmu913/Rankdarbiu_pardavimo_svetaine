@@ -1,7 +1,8 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 from .models import Category, Product, Order, UserProfile, Review, Favorite, Cart, CartItem, Transaction
-
+import stripe
+from django.http import HttpResponse
 
 def home(request):
     categories = Category.objects.all()
@@ -19,11 +20,9 @@ def contact(request):
     return render(request, 'contact.html')
 
 def register(request):
-    # jūsų registracijos logika
     return render(request, 'register.html')
 
 def products(request):
-    # jūsų kūrinių atvaizdavimo logika
     return render(request, 'products.html')
 
 
@@ -44,7 +43,6 @@ def create_order(request, product_id):
         quantity = int(request.POST.get('quantity', 1))
         total_price = product.price * quantity
         order = Order.objects.create(product=product, buyer=request.user, quantity=quantity, total_price=total_price)
-        # Дополнительные действия, например, перенаправление на страницу заказа или платежная система
         return render(request, 'order_confirmation.html', {'order': order})
     else:
         return render(request, 'create_order.html', {'product': product})
@@ -100,7 +98,6 @@ def checkout(request):
     cart_items = user_cart.products.all()
     total_price = sum(item.product.price * item.quantity for item in cart_items)
     transaction = Transaction.objects.create(buyer=request.user, total_price=total_price)
-    # Дополнительные действия, например, обработка платежа и оформление заказа
     user_cart.products.clear()
     return render(request, 'checkout.html', {'transaction': transaction})
 
@@ -118,8 +115,6 @@ def user_profile(request):
 def edit_profile(request):
     user_profile = get_object_or_404(UserProfile, user=request.user)
     if request.method == 'POST':
-        # Обработка отправленной формы для редактирования профиля
-        # ...
         return redirect('user_profile')
     else:
         context = {
@@ -128,3 +123,35 @@ def edit_profile(request):
         return render(request, 'edit_profile.html', context)
 
 
+stripe.api_key = 'fasfasfasfssdffčęčęč'
+
+
+def payment(request):
+    if request.method == 'POST':
+        stripe_token = request.POST.get('stripeToken')  # Gaukime Stripe Token iš POST duomenų
+        card_number = request.POST.get('card_number')
+        card_holder = request.POST.get('card_holder')
+
+        # Čia vykdykite mokėjimo logiką su gautais duomenimis
+        # Pavyzdžiui, siųskite mokėjimo užklausą į Stripe API
+
+        # Jei mokėjimas sėkmingas, grąžinkime atsakymą
+        return HttpResponse('Mokėjimas sėkmingas!')
+
+    return render(request, 'payment.html')
+
+def process_payment(request):
+    stripe.api_key = 'fasfasfasfssdffčęčęč'
+
+    if request.method == 'POST':
+        token = request.POST.get('stripeToken')
+        card_number = request.POST.get('card_number')
+        card_holder = request.POST.get('card_holder')
+
+        # Čia įvykdykite mokėjimo veiksmus su Stripe
+
+        # Jei mokėjimas sėkmingas, grąžinkite "payment_success.html" šabloną
+        return render(request, 'payment_success.html')
+
+    # Jei užklausa nėra POST, grąžinkite "payment.html" šabloną
+    return render(request, 'payment.html')

@@ -27,6 +27,9 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+STRIPE_PUBLIC_KEY = 'fasfasfasfssdffčęčęč'
+STRIPE_SECRET_KEY = 'fasfasfasfssdffčęčęč'
+
 LOGIN_URL = 'login'
 LOGOUT_REDIRECT_URL = 'home'
 
