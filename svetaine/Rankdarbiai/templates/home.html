@@ -38,6 +38,26 @@
             </div>
           </div>
         {% endfor %}
+        <head>
+            <style>
+                .category-name {
+                margin-bottom: 10px; /* prideda apatini tarpą po kiekviena kategorija */
+                margin-right: 20px;  /* prideda dešinį tarpą po kiekviena kategorija */
+                font-size: 18px;     /* nustato šrifto dydį kategorijos pavadinimui */
+                color: #333;         /* nustato teksto spalvą */
+                position: relative;  /* nustato, kad psevdo-elementas būtų santykinai pozicionuotas */
+              }
+
+                .category-name::after {
+                content: "|";        /* nustato turinį (tekstą) psevdo-elementui */
+                position: absolute;  /* nustato, kad psevdo-elementas būtų absoliučiai pozicionuotas */
+                right: -10px;        /* nustato, kad psevdo-elementas būtų 10 pikselių nuo dešinės */
+              }
+            </style>
+        </head>
+        {% for category in categories %}
+            <div class="category-name"><a href="{% url 'category_products' category.id %}">{{ category.name }}</a></div>
+        {% endfor %}
       </div>
     </div>
   </div>

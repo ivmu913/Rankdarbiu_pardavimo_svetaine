@@ -3,6 +3,7 @@ from django.contrib.auth.decorators import login_required
 from .models import Category, Product, Order, UserProfile, Review, Favorite, Cart, CartItem, Transaction
 import stripe
 from django.http import HttpResponse
+from .forms import ProductForm
 
 def home(request):
     categories = Category.objects.all()
@@ -24,6 +25,31 @@ def register(request):
 
 def products(request):
     return render(request, 'products.html')
+
+def add_product(request):
+    if request.method == 'POST':
+        form = ProductForm(request.POST, request.FILES)
+        if form.is_valid():
+            product = form.save(commit=False)
+            product.owner = request.user
+            product.save()
+            return redirect('product_list')
+    else:
+        form = ProductForm()
+    return render(request, 'add_product.html', {'form': form})
+
+def category_products(request, category_id):
+    category = Category.objects.get(pk=category_id)
+    products = Product.objects.filter(category=category)
+    context = {
+        'category': category,
+        'products': products
+    }
+    return render(request, 'category_products.html', context)
+
+def all_categories(request):
+    categories = Category.objects.all()
+    return render(request, 'categories.html', {'categories': categories})
 
 
 def product_detail(request, product_id):

@@ -37,3 +37,8 @@ body {
   max-height: 500px;
 }
 
+.category-name {
+    margin-bottom: 10px; /* prideda apatini tarpą po kiekviena kategorija */
+    font-size: 18px;     /* nustato šrifto dydį kategorijos pavadinimui */
+    color: #333;         /* nustato teksto spalvą */
+}

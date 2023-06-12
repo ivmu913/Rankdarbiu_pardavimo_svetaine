@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+
+{% block title %}Produktai kategorijoje - {{ category.name }}{% endblock %}
+
+{% block content %}
+    <h1 class="mt-4">Produktai kategorijoje - {{ category.name }}</h1>
+
+    {% if products %}
+        <ul>
+            {% for product in products %}
+                <li>
+                    <h3>{{ product.title }}</h3>
+                    <p>Kaina: {{ product.price }}</p>
+                    <p>Aprašymas: {{ product.description }}</p>
+                    <img src="{{ product.image.url }}" alt="{{ product.title }}">
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>Šioje kategorijoje nėra produktų.</p>
+    {% endif %}
+
+    <a href="{% url 'categories' %}">Grįžti į kategorijų sąrašą</a>
+{% endblock %}
