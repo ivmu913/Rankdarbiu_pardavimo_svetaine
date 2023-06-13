@@ -1,14 +1,16 @@
 {% extends 'base.html' %}
 
+{% block title %}Fiktyvus mokėjimas{% endblock %}
+
 {% block content %}
     <div class="container">
-        <h1 class="mt-4 mb-3">Apmokėjimas</h1>
+        <h1 class="mt-4 mb-3">Fiktyvus mokėjimas</h1>
 
-        <form action="{% url 'payment' %}" method="POST">
+        <form action="{% url 'fake_payment' %}" method="POST">
             {% csrf_token %}
             <div class="form-group">
-                <label for="stripeToken">Stripe Token:</label>
-                <input type="text" class="form-control" id="stripeToken" name="stripeToken" placeholder="Įveskite Stripe Token">
+                <label for="amount">Suma:</label>
+                <input type="text" class="form-control" id="amount" name="amount" placeholder="Įveskite sumą">
             </div>
             <div class="form-group">
                 <label for="card_number">Kortelės numeris:</label>
@@ -18,11 +20,11 @@
                 <label for="card_holder">Kortelės savininkas:</label>
                 <input type="text" class="form-control" id="card_holder" name="card_holder" placeholder="Įveskite kortelės savininką">
             </div>
-            <!-- Kitos kortelės duomenys -->
             <button type="submit" class="btn btn-primary">Patvirtinti mokėjimą</button>
         </form>
     </div>
 {% endblock %}
+
 
 
 

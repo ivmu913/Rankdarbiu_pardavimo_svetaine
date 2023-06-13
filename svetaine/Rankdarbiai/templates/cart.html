@@ -1,5 +1,7 @@
 {% extends 'base.html' %}
 
+{% block title %}Krepšelis{% endblock %}
+
 {% block content %}
     <div class="container">
         <h1 class="mt-4 mb-3">Krepšelis</h1>
@@ -31,9 +33,9 @@
             </tbody>
         </table>
 
-        <p class="lead">Bendra suma: {{ total }}</p>
+        <p class="lead">Bendra suma: {{ total_price }}</p>
 
-        <form action="{% url 'payment' %}" method="POST">
+        <form action="{% url 'checkout' %}" method="POST">
             {% csrf_token %}
             <button class="btn btn-primary" type="submit">Apmokėti</button>
         </form>

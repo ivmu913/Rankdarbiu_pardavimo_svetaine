@@ -1,7 +1,6 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 from .models import Category, Product, Order, UserProfile, Review, Favorite, Cart, CartItem, Transaction
-import stripe
 from django.http import HttpResponse
 from .forms import ProductForm
 
@@ -79,9 +78,9 @@ def add_to_favorites(request, product_id):
     product = get_object_or_404(Product, id=product_id)
     favorite, created = Favorite.objects.get_or_create(user=request.user, product=product)
     if created:
-        message = 'Продукт успешно добавлен в избранное'
+        message = 'Prekė sėkmingai pridėta į mėgstamiausius'
     else:
-        message = 'Продукт уже есть в избранном'
+        message = 'Prekė jau yra jūsų mėgstamiausių sąraše'
     return render(request, 'add_to_favorites.html', {'message': message})
 
 
@@ -149,35 +148,25 @@ def edit_profile(request):
         return render(request, 'edit_profile.html', context)
 
 
-stripe.api_key = 'fasfasfasfssdffčęčęč'
-
-
-def payment(request):
+def fake_payment(request):
     if request.method == 'POST':
-        stripe_token = request.POST.get('stripeToken')  # Gaukime Stripe Token iš POST duomenų
+        payment_amount = request.POST.get('amount')
         card_number = request.POST.get('card_number')
         card_holder = request.POST.get('card_holder')
 
-        # Čia vykdykite mokėjimo logiką su gautais duomenimis
-        # Pavyzdžiui, siųskite mokėjimo užklausą į Stripe API
+        payment_success = True
 
-        # Jei mokėjimas sėkmingas, grąžinkime atsakymą
-        return HttpResponse('Mokėjimas sėkmingas!')
+        if payment_success:
+            return render(request, 'payment_success.html')
+        else:
+            return render(request, 'payment_failure.html')
 
-    return render(request, 'payment.html')
+    return render(request, 'fake_payment.html')
 
-def process_payment(request):
-    stripe.api_key = 'fasfasfasfssdffčęčęč'
 
-    if request.method == 'POST':
-        token = request.POST.get('stripeToken')
-        card_number = request.POST.get('card_number')
-        card_holder = request.POST.get('card_holder')
+def payment_success(request):
+    return render(request, 'payment_success.html')
 
-        # Čia įvykdykite mokėjimo veiksmus su Stripe
 
-        # Jei mokėjimas sėkmingas, grąžinkite "payment_success.html" šabloną
-        return render(request, 'payment_success.html')
-
-    # Jei užklausa nėra POST, grąžinkite "payment.html" šabloną
-    return render(request, 'payment.html')
+def payment_failure(request):
+    return render(request, 'payment_failure.html')
