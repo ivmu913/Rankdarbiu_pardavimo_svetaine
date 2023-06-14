@@ -2,25 +2,39 @@
 
 {% block content %}
 <main class="form-signin">
-  <form>
+  <form method="post">
+    {% csrf_token %}
     <h1 class="h3 mb-3 fw-normal">Prisijungimas</h1>
 
+    {% if form.non_field_errors %}
+      <div class="alert alert-danger" role="alert">
+        {{ form.non_field_errors }}
+      </div>
+    {% endif %}
+
     <div class="form-floating">
-      <input type="email" class="form-control" id="floatingInput" placeholder="name@example.com">
-      <label for="floatingInput">El. pašto adresas</label>
+      {{ form.username.label_tag }}
+      {{ form.username }}
     </div>
     <div class="form-floating">
-      <input type="password" class="form-control" id="floatingPassword" placeholder="Slaptažodis">
-      <label for="floatingPassword">Slaptažodis</label>
+      {{ form.password.label_tag }}
+      {{ form.password }}
     </div>
 
     <div class="checkbox mb-3">
       <label>
-        <input type="checkbox" value="remember-me"> Prisiminti mane
+        <input type="checkbox" name="remember_me" value="1"> Prisiminti mane
       </label>
     </div>
     <button class="w-100 btn btn-lg btn-primary" type="submit">Prisijungti</button>
   </form>
 </main>
 {% endblock %}
+
+
+
+
+
+
+
 

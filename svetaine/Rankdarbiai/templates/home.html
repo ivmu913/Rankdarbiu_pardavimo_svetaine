@@ -2,7 +2,8 @@
 
 {% block content %}
   <div class="jumbotron">
-    <h1>Sveiki atvykę į  Rankdarbių Parduotuvė!</h1>
+    <img src="/static/imageonline-co-textimage.jpg" alt="Paveikslėlis" class="nav-icon" style="width: 1050px; height:650px;">
+    <h1>Sveiki atvykę į Rankdarbių Parduotuvę!</h1>
     <p>Esame didžiausia rankų darbo kūrinių rinkmena Lietuvoje.</p>
     <a href="{% url 'products' %}" class="btn btn-primary">Peržiūrėti kūrinius</a>
   </div>
@@ -25,40 +26,32 @@
   <div class="row">
     <div class="col-md-12">
       <h2>Naujausi kūriniai</h2>
-      <div class="card-deck">
-        {% for product in latest_products %}
-          <div class="card">
-            <img src="{{ product.image.url }}" class="card-img-top" alt="{{ product.title }}">
-            <div class="card-body">
-              <h5 class="card-title">{{ product.title }}</h5>
-              <p class="card-text">{{ product.description }}</p>
+      <div id="carouselExampleControls" class="carousel slide" data-ride="carousel">
+        <div class="carousel-inner">
+          {% for product in latest_products %}
+            <div class="carousel-item {% if forloop.first %}active{% endif %}">
+              <div class="card">
+                <img src="{{ product.image.url }}" class="card-img-top" alt="{{ product.title }}">
+                <div class="card-body">
+                </div>
+                <div class="card-footer">
+                  <a href="{% url 'product_detail' product.id %}" class="btn btn-primary">Detaliau</a>
+                </div>
+              </div>
             </div>
-            <div class="card-footer">
-              <a href="{% url 'product_detail' product.id %}" class="btn btn-primary">Detaliau</a>
-            </div>
-          </div>
-        {% endfor %}
-        <head>
-            <style>
-                .category-name {
-                margin-bottom: 10px; /* prideda apatini tarpą po kiekviena kategorija */
-                margin-right: 20px;  /* prideda dešinį tarpą po kiekviena kategorija */
-                font-size: 18px;     /* nustato šrifto dydį kategorijos pavadinimui */
-                color: #333;         /* nustato teksto spalvą */
-                position: relative;  /* nustato, kad psevdo-elementas būtų santykinai pozicionuotas */
-              }
-
-                .category-name::after {
-                content: "|";        /* nustato turinį (tekstą) psevdo-elementui */
-                position: absolute;  /* nustato, kad psevdo-elementas būtų absoliučiai pozicionuotas */
-                right: -10px;        /* nustato, kad psevdo-elementas būtų 10 pikselių nuo dešinės */
-              }
-            </style>
-        </head>
-        {% for category in categories %}
-            <div class="category-name"><a href="{% url 'category_products' category.id %}">{{ category.name }}</a></div>
-        {% endfor %}
+          {% endfor %}
+        </div>
+        <a class="carousel-control-prev" href="#carouselExampleControls" role="button" data-slide="prev">
+          <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+          <span class="sr-only">Previous</span>
+        </a>
+        <a class="carousel-control-next" href="#carouselExampleControls" role="button" data-slide="next">
+          <span class="carousel-control-next-icon" aria-hidden="true"></span>
+          <span class="sr-only">Next</span>
+        </a>
       </div>
     </div>
   </div>
 {% endblock %}
+
+

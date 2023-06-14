@@ -3,13 +3,16 @@ from django.contrib.auth.decorators import login_required
 from .models import Category, Product, Order, UserProfile, Review, Favorite, Cart, CartItem, Transaction
 from django.http import HttpResponse
 from .forms import ProductForm
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.models import User
+from django.contrib import messages
 
 def home(request):
     categories = Category.objects.all()
-    products = Product.objects.all()
+    latest_products = Product.objects.all().order_by('-created_at')[:5]
     context = {
         'categories': categories,
-        'products': products
+        'latest_products': latest_products
     }
     return render(request, 'home.html', context)
 
@@ -19,11 +22,37 @@ def about(request):
 def contact(request):
     return render(request, 'contact.html')
 
+
 def register(request):
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        email = request.POST.get('email')
+        password = request.POST.get('password')
+        password2 = request.POST.get('confirm_password')
+
+        if password == password2:
+            if User.objects.filter(username=username).exists():
+                messages.error(request, f'Vartotojo vardas {username} užimtas!')
+                return redirect('register')
+            elif User.objects.filter(email=email).exists():
+                messages.error(request, f'Vartotojas su el. paštu {email} jau užregistruotas!')
+                return redirect('register')
+            else:
+                user = User.objects.create(username=username, email=email, password=password)
+                messages.success(request, f'Vartotojas {username} sėkmingai užregistruotas!')
+                return redirect('registration_success')
+        else:
+            messages.error(request, 'Slaptažodžiai nesutampa!')
+            return redirect('register')
+
     return render(request, 'register.html')
 
+def registration_success(request):
+    return render(request, 'registration_success.html')
+
 def products(request):
-    return render(request, 'products.html')
+    products = Product.objects.all()
+    return render(request, 'products.html', {'products': products})
 
 def add_product(request):
     if request.method == 'POST':
@@ -60,6 +89,13 @@ def product_detail(request, product_id):
     }
     return render(request, 'product_detail.html', context)
 
+def add_to_cart(request, product_id):
+    product = Product.objects.get(id=product_id)
+    if 'cart' not in request.session:
+        request.session['cart'] = []
+    request.session['cart'].append(product_id)
+    request.session.modified = True
+    return redirect('cart')
 
 @login_required
 def create_order(request, product_id):
@@ -170,3 +206,6 @@ def payment_success(request):
 
 def payment_failure(request):
     return render(request, 'payment_failure.html')
+
+def help(request):
+    return render(request, 'help.html')
