@@ -13,203 +13,37 @@
       <div class="col-md-5 col-lg-4 order-md-last">
         <h4 class="d-flex justify-content-between align-items-center mb-3">
           <span class="text-primary">Jūsų krepšelis</span>
-          <span class="badge bg-primary rounded-pill">3</span>
+          <span class="badge bg-primary rounded-pill">{{ cart_items|length }}</span>
         </h4>
         <ul class="list-group mb-3">
+          {% for item in cart_items %}
           <li class="list-group-item d-flex justify-content-between lh-sm">
             <div>
-              <h6 class="my-0">Produkto pavadinimas</h6>
-              <small class="text-body-secondary">Trumpas aprašymas</small>
+              <h6 class="my-0">{{ item.product.title }}</h6>
+              <small class="text-body-secondary">{{ item.product.description }}</small>
             </div>
-            <span class="text-body-secondary">12 €</span>
+            <span class="text-body-secondary">{{ item.product.price }} €</span>
           </li>
-          <li class="list-group-item d-flex justify-content-between lh-sm">
-            <div>
-              <h6 class="my-0">Antras produktas</h6>
-              <small class="text-body-secondary">Trumpas aprašymas</small>
-            </div>
-            <span class="text-body-secondary">8 €</span>
-          </li>
-          <li class="list-group-item d-flex justify-content-between lh-sm">
-            <div>
-              <h6 class="my-0">Trečias elementas</h6>
-              <small class="text-body-secondary">Trumpas aprašymas</small>
-            </div>
-            <span class="text-body-secondary">5 €</span>
-          </li>
-          <li class="list-group-item d-flex justify-content-between bg-body-tertiary">
-            <div class="text-success">
-              <h6 class="my-0">Promo kodas</h6>
-              <small>EXAMPLECODE</small>
-            </div>
-            <span class="text-success">-5 €</span>
-          </li>
+          {% endfor %}
           <li class="list-group-item d-flex justify-content-between">
             <span>Viso (EUR)</span>
-            <strong>20 €</strong>
+            <strong>{{ total_price }} €</strong>
           </li>
         </ul>
 
-        <form class="card p-2">
+        <form action="{% url 'apply_promo_code' %}" method="POST" class="card p-2">
+          {% csrf_token %}
           <div class="input-group">
-            <input type="text" class="form-control" placeholder="Promo kodas">
+            <input type="text" class="form-control" name="promo_code" placeholder="Promo kodas">
             <button type="submit" class="btn btn-secondary">Panaudoti</button>
           </div>
         </form>
       </div>
       <div class="col-md-7 col-lg-8">
         <h4 class="mb-3">Apmokėjimo adresas</h4>
-        <form class="needs-validation" novalidate>
-          <div class="row g-3">
-            <div class="col-sm-6">
-              <label for="firstName" class="form-label">Vardas</label>
-              <input type="text" class="form-control" id="firstName" placeholder="" value="" required>
-              <div class="invalid-feedback">
-                Įveskite galiojantį vardą.
-              </div>
-            </div>
-
-            <div class="col-sm-6">
-              <label for="lastName" class="form-label">Pavardė</label>
-              <input type="text" class="form-control" id="lastName" placeholder="" value="" required>
-              <div class="invalid-feedback">
-                Įveskite galiojančią pavardę.
-              </div>
-            </div>
-
-            <div class="col-12">
-              <label for="username" class="form-label">Prisijungimo vardas</label>
-              <div class="input-group has-validation">
-                <span class="input-group-text">@</span>
-                <input type="text" class="form-control" id="username" placeholder="Prisijungimo vardas" required>
-                <div class="invalid-feedback">
-                  Prisijungimo vardas yra privalomas.
-                </div>
-              </div>
-            </div>
-
-            <div class="col-12">
-              <label for="email" class="form-label">El. paštas <span class="text-body-secondary">(Neprivaloma)</span></label>
-              <input type="email" class="form-control" id="email" placeholder="vardas@pavyzdys.com">
-              <div class="invalid-feedback">
-                Įveskite galiojantį el. pašto adresą pristatymo atnaujinimams.
-              </div>
-            </div>
-
-            <div class="col-12">
-              <label for="address" class="form-label">Adresas</label>
-              <input type="text" class="form-control" id="address" placeholder="Pagrindinis g. 123" required>
-              <div class="invalid-feedback">
-                Įveskite pristatymo adresą.
-              </div>
-            </div>
-
-            <div class="col-12">
-              <label for="address2" class="form-label">Adresas 2 <span class="text-body-secondary">(Neprivaloma)</span></label>
-              <input type="text" class="form-control" id="address2" placeholder="Butas arba kambario numeris">
-            </div>
-
-            <div class="col-md-5">
-              <label for="country" class="form-label">Rajonas</label>
-              <select class="form-select" id="country" required>
-                <option value="">Pasirinkite...</option>
-                  <option>Vilniaus rajonas</option>
-                  <option>Kauno rajonas</option>
-                  <option>Klaipėdos rajonas</option>
-                  <option>Šiaulių rajonas</option>
-                  <option>Panevėžio rajonas</option>
-              </select>
-              <div class="invalid-feedback">
-                Pasirinkite galiojantį rajoną.
-              </div>
-            </div>
-
-            <div class="col-md-4">
-              <label for="state" class="form-label">Valstybė</label>
-              <select class="form-select" id="state" required>
-                <option value="">Pasirinkite...</option>
-                <option>Lietuva</option>
-              </select>
-              <div class="invalid-feedback">
-                Įveskite galiojančią valstybę.
-              </div>
-            </div>
-
-            <div class="col-md-3">
-              <label for="zip" class="form-label">Pašto kodas</label>
-              <input type="text" class="form-control" id="zip" placeholder="" required>
-              <div class="invalid-feedback">
-                Pašto kodas yra privalomas.
-              </div>
-            </div>
-          </div>
-
-          <hr class="my-4">
-
-          <div class="form-check">
-            <input type="checkbox" class="form-check-input" id="same-address">
-            <label class="form-check-label" for="same-address">Pristatymo adresas yra tas pats kaip ir sąskaitos adresas</label>
-          </div>
-
-          <div class="form-check">
-            <input type="checkbox" class="form-check-input" id="save-info">
-            <label class="form-check-label" for="save-info">Įrašyti šią informaciją kitam kartui</label>
-          </div>
-
-          <hr class="my-4">
-
-          <h4 class="mb-3">Mokėjimas</h4>
-
-          <div class="my-3">
-            <div class="form-check">
-              <input id="credit" name="paymentMethod" type="radio" class="form-check-input" checked required>
-              <label class="form-check-label" for="credit">Kreditinė kortelė</label>
-            </div>
-            <div class="form-check">
-              <input id="debit" name="paymentMethod" type="radio" class="form-check-input" required>
-              <label class="form-check-label" for="debit">Debetinė kortelė</label>
-            </div>
-            <div class="form-check">
-              <input id="paypal" name="paymentMethod" type="radio" class="form-check-input" required>
-              <label class="form-check-label" for="paypal">PayPal</label>
-            </div>
-          </div>
-
-          <div class="row gy-3">
-            <div class="col-md-6">
-              <label for="cc-name" class="form-label">Kortelės savininko vardas</label>
-              <input type="text" class="form-control" id="cc-name" placeholder="" required>
-              <small class="text-body-secondary">Pilnas vardas, atvaizduojamas ant kortelės</small>
-              <div class="invalid-feedback">
-                Kortelės savininko vardas yra privalomas
-              </div>
-            </div>
-
-            <div class="col-md-6">
-              <label for="cc-number" class="form-label">Kreditinės kortelės numeris</label>
-              <input type="text" class="form-control" id="cc-number" placeholder="" required>
-              <div class="invalid-feedback">
-                Kreditinės kortelės numeris yra privalomas
-              </div>
-            </div>
-
-            <div class="col-md-3">
-              <label for="cc-expiration" class="form-label">Galiojimo pabaiga</label>
-              <input type="text" class="form-control" id="cc-expiration" placeholder="" required>
-              <div class="invalid-feedback">
-                Galiojimo pabaigos data yra privaloma
-              </div>
-            </div>
-
-            <div class="col-md-3">
-              <label for="cc-cvv" class="form-label">CVV</label>
-              <input type="text" class="form-control" id="cc-cvv" placeholder="" required>
-              <div class="invalid-feedback">
-                CVV yra privaloma
-              </div>
-            </div>
-          </div>
-
+        <form class="needs-validation" action="{% url 'checkout' %}" method="POST" novalidate>
+          {% csrf_token %}
+          <!-- Your existing form fields here -->
           <hr class="my-4">
 
           <button class="w-100 btn btn-primary btn-lg" type="submit">Apmokėti</button>
@@ -219,5 +53,6 @@
   </main>
 </div>
 {% endblock %}
+
 
 

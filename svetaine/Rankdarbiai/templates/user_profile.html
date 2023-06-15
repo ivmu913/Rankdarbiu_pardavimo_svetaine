@@ -9,7 +9,23 @@
     <p>Adresas: {{ user.userprofile.location }}</p>
     <p>Telefono numeris: {{ user.userprofile.phone_number }}</p>
     <p>Paskutinis prisijungimas: {{ user.last_login }}</p>
+
+    <h4>Įdėtos prekės:</h4>
+    <ul>
+        {% for product in user_products %}
+            <li>
+                {{ product.title }}
+                <a href="{% url 'edit_product' product.id %}" class="btn btn-sm btn-primary">Redaguoti</a>
+                <a href="{% url 'delete_product' product.id %}" class="btn btn-sm btn-danger">Ištrinti</a>
+            </li>
+        {% empty %}
+            <li>Nėra įdėtų prekių.</li>
+        {% endfor %}
+    </ul>
+
     <a href="{% url 'edit_profile' %}" class="btn btn-primary">Redaguoti Profilį</a>
     <a href="{% url 'add_product' %}" class="btn btn-primary">Įkelti Prekę</a>
 {% endblock %}
+
+
 

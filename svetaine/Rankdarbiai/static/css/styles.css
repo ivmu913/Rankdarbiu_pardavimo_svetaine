@@ -6,6 +6,12 @@ body {
   font-family: Arial, sans-serif;
 }
 
+body {
+    background-color: #FFD966;  /* čia nurodoma mėlyna spalva HEX formatu */
+}
+.card {
+    background-color: #FFD966;  /* čia nurodoma mėlyna spalva HEX formatu */
+}
 .container {
   max-width: 1200px;
   margin: 0 auto;
@@ -41,4 +47,14 @@ body {
     margin-bottom: 10px; /* prideda apatini tarpą po kiekviena kategorija */
     font-size: 18px;     /* nustato šrifto dydį kategorijos pavadinimui */
     color: #333;         /* nustato teksto spalvą */
+}
+
+
+
+.carousel-control-prev-icon {
+    filter: invert(1) grayscale(100%) brightness(100%); /* keicia previous ir next strelyciu spalva */
+}
+
+.carousel-control-next-icon {
+    filter: invert(1) grayscale(100%) brightness(100%);/* keicia previous ir next strelyciu spalva */
 }

@@ -1,6 +1,9 @@
 {% extends 'base.html' %}
 
+
 {% block title %}Krepšelis{% endblock %}
+
+{% load multiply %}
 
 {% block content %}
     <div class="container">
@@ -20,8 +23,15 @@
                 {% for item in cart_items %}
                     <tr>
                         <td>{{ item.product.title }}</td>
-                        <td>{{ item.quantity }}</td>
                         <td>{{ item.product.price }}</td>
+                        <td>
+                            <form action="{% url 'update_cart' item.product.id %}" method="POST">
+                                {% csrf_token %}
+                                <input type="number" name="quantity" value="{{ item.quantity }}" min="1">
+                                <button type="submit" class="btn btn-sm btn-success">Atnaujinti</button>
+                            </form>
+                        </td>
+                       <td>{{ item.quantity|multiply:item.product.price }}</td>
                         <td>
                             <form action="{% url 'remove_from_cart' item.product.id %}" method="POST">
                                 {% csrf_token %}
@@ -41,5 +51,4 @@
         </form>
     </div>
 {% endblock %}
-
 

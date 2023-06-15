@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+
+{% block title %}Panaudoti promo kodą{% endblock %}
+
+{% block content %}
+    <h1>Panaudoti promo kodą</h1>
+
+    <form action="{% url 'apply_promo_code' %}" method="POST">
+        {% csrf_token %}
+        <input type="text" name="promo_code" placeholder="Įveskite promo kodą">
+        <button type="submit">Panaudoti</button>
+    </form>
+{% endblock %}

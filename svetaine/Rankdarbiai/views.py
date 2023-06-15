@@ -1,8 +1,7 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 from .models import Category, Product, Order, UserProfile, Review, Favorite, Cart, CartItem, Transaction
-from django.http import HttpResponse
-from .forms import ProductForm
+from .forms import ProductForm, UserProfileForm
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from django.contrib import messages
@@ -50,10 +49,38 @@ def register(request):
 def registration_success(request):
     return render(request, 'registration_success.html')
 
+@login_required
+def user_profile(request):
+    user_profile = get_object_or_404(UserProfile, user=request.user)
+    user_products = user_profile.user_products.all()  # Gauti įdėtas prekes
+    context = {
+        'user_profile': user_profile,
+        'user_products': user_products
+    }
+    return render(request, 'user_profile.html', context)
+
+@login_required
+def edit_profile(request):
+    user_profile = get_object_or_404(UserProfile, user=request.user)
+    if request.method == 'POST':
+        form = UserProfileForm(request.POST, request.FILES, instance=user_profile)
+        if form.is_valid():
+            form.save()
+            return redirect('user_profile')
+    else:
+        form = UserProfileForm(instance=user_profile)
+    context = {
+        'user_profile': user_profile,
+        'form': form,
+    }
+    return render(request, 'edit_profile.html', context)
+
+
 def products(request):
     products = Product.objects.all()
     return render(request, 'products.html', {'products': products})
 
+@login_required
 def add_product(request):
     if request.method == 'POST':
         form = ProductForm(request.POST, request.FILES)
@@ -61,10 +88,35 @@ def add_product(request):
             product = form.save(commit=False)
             product.owner = request.user
             product.save()
-            return redirect('product_list')
+            request.user.userprofile.user_products.add(product)  # Įdedama prekė į vartotojo profilio prekių sąrašą
+            return redirect('user_profile')
     else:
         form = ProductForm()
     return render(request, 'add_product.html', {'form': form})
+
+@login_required
+def edit_product(request, product_id):
+    product = get_object_or_404(Product, id=product_id)
+    if request.method == 'POST':
+        form = ProductForm(request.POST, request.FILES, instance=product)
+        if form.is_valid():
+            form.save()
+            return redirect('user_profile')
+    else:
+        form = ProductForm(instance=product)
+    return render(request, 'edit_product.html', {'form': form})
+
+@login_required
+def delete_product(request, product_id):
+    product = get_object_or_404(Product, id=product_id)
+    return render(request, 'delete_product.html', {'product': product})
+
+@login_required
+def confirm_delete_product(request, product_id):
+    product = get_object_or_404(Product, id=product_id)
+    product.delete()
+    return redirect('user_profile')
+
 
 def category_products(request, category_id):
     category = Category.objects.get(pk=category_id)
@@ -89,13 +141,7 @@ def product_detail(request, product_id):
     }
     return render(request, 'product_detail.html', context)
 
-def add_to_cart(request, product_id):
-    product = Product.objects.get(id=product_id)
-    if 'cart' not in request.session:
-        request.session['cart'] = []
-    request.session['cart'].append(product_id)
-    request.session.modified = True
-    return redirect('cart')
+
 
 @login_required
 def create_order(request, product_id):
@@ -122,66 +168,69 @@ def add_to_favorites(request, product_id):
 
 @login_required
 def cart(request):
-    user_cart, created = Cart.objects.get_or_create(user=request.user)
-    cart_items = user_cart.products.all()
-    context = {
-        'cart_items': cart_items
-    }
+    user_cart = Cart.objects.get(user=request.user)
+    cart_items = CartItem.objects.filter(cart=user_cart)
+    total_price = sum([item.product.price * item.quantity for item in cart_items])
+    context = {'cart_items': cart_items, 'total_price': total_price}
     return render(request, 'cart.html', context)
+
 
 
 @login_required
 def add_to_cart(request, product_id):
     product = get_object_or_404(Product, id=product_id)
-    user_cart, created = Cart.objects.get_or_create(user=request.user)
+    user_cart, _ = Cart.objects.get_or_create(user=request.user)
     cart_item, created = CartItem.objects.get_or_create(cart=user_cart, product=product)
-    cart_item.quantity += 1
+    if created:
+        cart_item.quantity = 1
+    else:
+        cart_item.quantity += 1
     cart_item.save()
     return redirect('cart')
+
+@login_required
+def update_cart(request, product_id):
+    if request.method == 'POST':
+        user_cart = Cart.objects.get(user=request.user)
+        product = get_object_or_404(Product, id=product_id)
+        cart_item = CartItem.objects.get(cart=user_cart, product=product)
+        quantity = request.POST.get('quantity')
+        cart_item.quantity = quantity
+        cart_item.save()
+    return redirect('cart')
+
+@login_required
+def apply_promo_code(request):
+    # Logika taikant promo kodą
+    return render(request, 'apply_promo_code.html')
+
 
 
 @login_required
 def remove_from_cart(request, product_id):
-    product = get_object_or_404(Product, id=product_id)
-    user_cart = Cart.objects.get(user=request.user)
-    cart_item = CartItem.objects.get(cart=user_cart, product=product)
-    if cart_item.quantity > 1:
-        cart_item.quantity -= 1
-        cart_item.save()
-    else:
-        cart_item.delete()
-    return redirect('cart')
+    cart = Cart.objects.get(user=request.user)  # Gaukite vartotojo krepšelį
+    product = get_object_or_404(Product, id=product_id)  # Raskite produktą pagal ID
+    cart_item = CartItem.objects.get(cart=cart, product=product)  # Raskite prekę krepšelyje
+    cart_item.delete()  # Pašalinkite prekę iš krepšelio
+    return redirect('cart')  # Grįžkite į krepšelio puslapį
+
+
 
 
 @login_required
 def checkout(request):
     user_cart = Cart.objects.get(user=request.user)
-    cart_items = user_cart.products.all()
-    total_price = sum(item.product.price * item.quantity for item in cart_items)
-    transaction = Transaction.objects.create(buyer=request.user, total_price=total_price)
-    user_cart.products.clear()
-    return render(request, 'checkout.html', {'transaction': transaction})
-
-
-@login_required
-def user_profile(request):
-    user_profile, created = UserProfile.objects.get_or_create(user=request.user)
-    context = {
-        'user_profile': user_profile
-    }
-    return render(request, 'user_profile.html', context)
-
-
-@login_required
-def edit_profile(request):
-    user_profile = get_object_or_404(UserProfile, user=request.user)
-    if request.method == 'POST':
-        return redirect('user_profile')
+    cart_items = CartItem.objects.filter(cart=user_cart)
+    total_price = sum([item.product.price * item.quantity for item in cart_items])
+    if total_price == 0:
+        messages.error(request, "Your cart is empty!")
+        return redirect('cart')
     else:
-        context = {
-            'user_profile': user_profile
-        }
-        return render(request, 'edit_profile.html', context)
+        transaction = Transaction.objects.create(buyer=request.user, total_price=total_price)
+        cart_items.delete()  # clear all items in cart
+        return render(request, 'checkout.html', {'transaction': transaction})
+
+
 
 
 def fake_payment(request):
