@@ -63,14 +63,15 @@ ROOT_URLCONF = 'svetaine.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        'DIRS': [os.path.join(BASE_DIR, 'Rankdarbiai', 'templates')],  # Čia turi būti nukreipta į pagrindinę šablonų direktoriją
         'APP_DIRS': True,
-        'DIRS': [os.path.join(BASE_DIR, 'Rankdarbiai', 'templatetags')],
         'OPTIONS': {
             'context_processors': [
                 'django.template.context_processors.debug',
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'Rankdarbiai.context_processors.categories',  # Čia yra pridėtas naujasis konteksto procesorius
             ],
         },
     },

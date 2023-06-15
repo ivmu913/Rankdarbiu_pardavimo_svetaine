@@ -9,8 +9,5 @@ class ProductForm(forms.ModelForm):
 class UserProfileForm(forms.ModelForm):
     class Meta:
         model = UserProfile
-        fields = ['biography', 'location', 'avatar', 'website', 'date_of_birth']
-        widgets = {
-            'biography': forms.Textarea(attrs={'rows': 3}),
-            'date_of_birth': forms.DateInput(attrs={'placeholder': 'YYYY-MM-DD'}),
-        }
+        fields = ['first_name', 'last_name', 'biography', 'location', 'avatar', 'website', 'date_of_birth', 'followers', 'address', 'phone_number']
+

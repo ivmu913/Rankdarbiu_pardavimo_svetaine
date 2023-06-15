@@ -63,7 +63,7 @@
                         </a>
                         <div class="dropdown-menu" aria-labelledby="navbarDropdown">
                             {% for category in categories %}
-                                <a class="dropdown-item" href="{% url 'category_products' category.id %}">{{ category.name }}</a>
+                            <a class="dropdown-item" href="{% url 'category_products' category.id %}">{{ category.name }}</a>
                             {% endfor %}
                         </div>
                     </li>
@@ -118,7 +118,6 @@
 </style>
 </body>
 </html>
-
 
 
 
