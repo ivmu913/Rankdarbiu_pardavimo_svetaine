@@ -1,12 +1,12 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 from .models import Category, Product, Order, UserProfile, Review, Favorite, Cart, CartItem, Transaction, PromoCode
-from .forms import ProductForm, UserProfileForm
+from .forms import ProductForm, UserProfileForm, UserForm
 from django.contrib.auth.forms import UserCreationForm
-from django.contrib.auth.models import User
+from django.contrib.auth.forms import UserChangeForm
 from django.contrib import messages
 from django.http import HttpResponseRedirect
-
+from django.contrib.auth.models import User
 
 
 def home(request):
@@ -72,43 +72,25 @@ def user_profile(request):
 
 @login_required
 def edit_profile(request):
+    user = get_object_or_404(User, username=request.user.username)
     user_profile = get_object_or_404(UserProfile, user=request.user)
     if request.method == 'POST':
-        form = UserProfileForm(request.POST, instance=user_profile)
-        if form.is_valid():
-            form.save()
+        user_form = UserForm(request.POST, instance=user)
+        profile_form = UserProfileForm(request.POST, request.FILES, instance=user_profile)
+        if user_form.is_valid() and profile_form.is_valid():
+            user_form.save()
+            profile_form.save()
+            messages.success(request, 'Your profile was successfully updated!')
             return redirect('user_profile')
+        else:
+            messages.error(request, 'Please correct the error below.')
     else:
-        form = UserProfileForm(instance=user_profile)
-    context = {
-        'user_profile': user_profile,
-        'form': form
-    }
-    return render(request, 'edit_profile.html', context)
-
-
-# @login_required
-# def edit_profile(request):
-#     user_profile = get_object_or_404(UserProfile, user=request.user)
-#     if request.method == 'POST':
-#         form = UserProfileForm(request.POST, request.FILES, instance=user_profile)
-#         if form.is_valid():
-#             profile = form.save(commit=False)
-#             try:
-#                 profile.save()
-#             except Exception as e:
-#                 print(f"Klaida išsaugojant profilį: {e}")
-#                 return render(request, 'edit_profile.html', context)
-#             return redirect('user_profile')
-#         else:
-#             print(form.errors)
-#     else:
-#         form = UserProfileForm(instance=user_profile)
-#     context = {
-#         'user_profile': user_profile,
-#         'form': form,
-#     }
-#     return render(request, 'edit_profile.html', context)
+        user_form = UserForm(instance=user)
+        profile_form = UserProfileForm(instance=user_profile)
+    return render(request, 'edit_profile.html', {
+        'user_form': user_form,
+        'profile_form': profile_form
+    })
 
 
 

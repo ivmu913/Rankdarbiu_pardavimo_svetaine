@@ -58,3 +58,10 @@ body {
 .carousel-control-next-icon {
     filter: invert(1) grayscale(100%) brightness(100%);/* keicia previous ir next strelyciu spalva */
 }
+
+<style>
+.avatar {
+    width: 150px;
+    height: 150px;
+}
+</style>
