@@ -35,12 +35,19 @@ class Order(models.Model):
 
 class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    bio = models.TextField(blank=True)
+    biography = models.TextField(blank=True)
     location = models.CharField(max_length=100, blank=True)
     avatar = models.ImageField(upload_to='avatars/', blank=True)
+    website = models.URLField(blank=True)
+    date_of_birth = models.DateField(blank=True, null=True)
+    followers = models.ManyToManyField(User, related_name='following', blank=True)
+    user_products = models.ManyToManyField(Product, related_name='users', blank=True)
+    address = models.CharField(max_length=100, blank=True)
+    phone_number = models.CharField(max_length=20, blank=True)
 
     def __str__(self):
         return self.user.username
+
 
 
 class Review(models.Model):
@@ -76,6 +83,15 @@ class CartItem(models.Model):
 
     def __str__(self):
         return f"CartItem ({self.cart.user.username}): {self.product.title}"
+
+class PromoCode(models.Model):
+    code = models.CharField(max_length=50)
+    valid_from = models.DateTimeField()
+    valid_to = models.DateTimeField()
+    discount = models.DecimalField(max_digits=5, decimal_places=2)
+
+    def is_valid(self):
+        return self.valid_from <= timezone.now() <= self.valid_to
 
 
 class Transaction(models.Model):

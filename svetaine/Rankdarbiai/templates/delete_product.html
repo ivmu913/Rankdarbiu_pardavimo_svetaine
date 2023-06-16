@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+
+{% block title %}Ištrinti Prekę{% endblock %}
+
+{% block content %}
+    <h1 class="mt-4">Ištrinti Prekę</h1>
+    <p>Ar tikrai norite ištrinti prekę "{{ product.title }}"?</p>
+    <form method="post" action="{% url 'confirm_delete_product' product.id %}">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger">Ištrinti</button>
+    </form>
+{% endblock %}
