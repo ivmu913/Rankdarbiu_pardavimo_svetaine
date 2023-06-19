@@ -52,16 +52,15 @@ body {
 
 
 .carousel-control-prev-icon {
-    filter: invert(1) grayscale(100%) brightness(100%); /* keicia previous ir next strelyciu spalva */
+    filter: invert(1) grayscale(100%) brightness(100%); /* keicia previous ir next streliciu spalva */
 }
 
 .carousel-control-next-icon {
-    filter: invert(1) grayscale(100%) brightness(100%);/* keicia previous ir next strelyciu spalva */
+    filter: invert(1) grayscale(100%) brightness(100%);/* keicia previous ir next streliciu spalva */
 }
 
-<style>
+
 .avatar {
     width: 150px;
     height: 150px;
 }
-</style>

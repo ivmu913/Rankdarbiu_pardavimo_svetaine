@@ -1,7 +1,7 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 from .models import Category, Product, Order, UserProfile, Review, Favorite, Cart, CartItem, Transaction, PromoCode
-from .forms import ProductForm, UserProfileForm, UserForm
+from .forms import ProductForm, UserProfileForm, UserForm, ReviewForm
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.forms import UserChangeForm
 from django.contrib import messages
@@ -112,6 +112,25 @@ def add_product(request):
         form = ProductForm()
     return render(request, 'add_product.html', {'form': form})
 
+def product_detail(request, product_id):
+    product = get_object_or_404(Product, id=product_id)
+    reviews = Review.objects.filter(product=product)
+    if request.method == 'POST':
+        form = ReviewForm(request.POST)
+        if form.is_valid():
+            new_review = form.save(commit=False)
+            new_review.product = product
+            new_review.user = request.user
+            new_review.save()
+    else:
+        form = ReviewForm()
+    context = {
+        'product': product,
+        'reviews': reviews,
+        'form': form
+    }
+    return render(request, 'product_detail.html', context)
+
 @login_required
 def edit_product(request, product_id):
     product = get_object_or_404(Product, id=product_id)
@@ -150,14 +169,7 @@ def all_categories(request):
     return render(request, 'categories.html', {'categories': categories})
 
 
-def product_detail(request, product_id):
-    product = get_object_or_404(Product, id=product_id)
-    reviews = Review.objects.filter(product=product)
-    context = {
-        'product': product,
-        'reviews': reviews
-    }
-    return render(request, 'product_detail.html', context)
+
 
 
 
@@ -285,3 +297,4 @@ def payment_failure(request):
 
 def help(request):
     return render(request, 'help.html')
+

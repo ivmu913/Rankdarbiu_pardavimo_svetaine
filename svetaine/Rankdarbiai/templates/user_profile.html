@@ -3,6 +3,7 @@
 {% block title %}Vartotojo Profilis{% endblock %}
 
 {% block content %}
+    <h1>{{ user_profile.user.username }}</h1> <!-- Čia buvo pridėtas vartotojo vardas -->
     <div class="profile">
         <div class="profile-header">
             {% if user_profile.avatar %}
@@ -12,7 +13,7 @@
             {% endif %}
         </div>
         <div class="profile-info">
-            <h1 class="mt-4">{{ user_profile.user.first_name }} {{ user_profile.user.last_name }}</h1>
+            <h4 class="mt-4">{{ user_profile.user.first_name }} {{ user_profile.user.last_name }}</h4>
             <p>Vardas: {{ user_profile.user.first_name }}</p>
             <p>Pavardė: {{ user_profile.user.last_name }}</p>
             <p>El. paštas: {{ user_profile.user.email }}</p>
@@ -30,7 +31,7 @@
     <ul>
         {% for product in user_profile.user_products.all %}
             <li>
-                {{ product.title }}
+                <a href="{% url 'product_detail' product.id %}">{{ product.title }}</a>
                 <a href="{% url 'edit_product' product.id %}" class="btn btn-sm btn-success">Redaguoti</a>
                 <a href="{% url 'delete_product' product.id %}" class="btn btn-sm btn-danger">Ištrinti</a>
             </li>
@@ -42,7 +43,3 @@
     <a href="{% url 'edit_profile' %}" class="btn btn-success">Redaguoti Profilį</a>
     <a href="{% url 'add_product' %}" class="btn btn-success">Įkelti Prekę</a>
 {% endblock %}
-
-
-
-
