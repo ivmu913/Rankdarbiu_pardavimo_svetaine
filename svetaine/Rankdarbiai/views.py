@@ -40,10 +40,8 @@ def register(request):
                 messages.error(request, f'Vartotojas su el. paštu {email} jau užregistruotas!')
                 return redirect('register')
             else:
-                # Use create_user method to encrypt password
                 user = User.objects.create_user(username=username, email=email, password=password)
 
-                # Create a user profile for the new user
                 profile = UserProfile(user=user)
                 profile.save()
 
@@ -168,10 +166,28 @@ def all_categories(request):
     categories = Category.objects.all()
     return render(request, 'categories.html', {'categories': categories})
 
+@login_required
+def favorites(request):
+    favorites = Favorite.objects.filter(user=request.user).select_related('product')
+    return render(request, 'favorites.html', {'favorites': favorites})
 
+@login_required
+def add_to_favorites(request, product_id):
+    user = request.user
+    product = get_object_or_404(Product, id=product_id)
+    favorite, created = Favorite.objects.get_or_create(user=user, product=product)
 
+    if created:
+        messages.success(request, f'Produktas "{product.title}" buvo pridėtas prie mėgstamiausių.')
+    else:
+        messages.info(request, f'Produktas "{product.title}" jau yra jūsų mėgstamųjų sąraše.')
 
+    return redirect('products')
 
+@login_required
+def remove_from_favorites(request, product_id):
+    Favorite.objects.filter(user=request.user, product_id=product_id).delete()
+    return redirect('favorites')
 
 @login_required
 def create_order(request, product_id):
@@ -185,15 +201,7 @@ def create_order(request, product_id):
         return render(request, 'create_order.html', {'product': product})
 
 
-@login_required
-def add_to_favorites(request, product_id):
-    product = get_object_or_404(Product, id=product_id)
-    favorite, created = Favorite.objects.get_or_create(user=request.user, product=product)
-    if created:
-        message = 'Prekė sėkmingai pridėta į mėgstamiausius'
-    else:
-        message = 'Prekė jau yra jūsų mėgstamiausių sąraše'
-    return render(request, 'add_to_favorites.html', {'message': message})
+
 
 
 @login_required
@@ -251,11 +259,11 @@ def apply_promo_code(request):
 
 @login_required
 def remove_from_cart(request, product_id):
-    cart = Cart.objects.get(user=request.user)  # Gaukite vartotojo krepšelį
-    product = get_object_or_404(Product, id=product_id)  # Raskite produktą pagal ID
-    cart_item = CartItem.objects.get(cart=cart, product=product)  # Raskite prekę krepšelyje
-    cart_item.delete()  # Pašalinkite prekę iš krepšelio
-    return redirect('cart')  # Grįžkite į krepšelio puslapį
+    cart = Cart.objects.get(user=request.user)
+    product = get_object_or_404(Product, id=product_id)
+    cart_item = CartItem.objects.get(cart=cart, product=product)
+    cart_item.delete()
+    return redirect('cart')
 
 
 

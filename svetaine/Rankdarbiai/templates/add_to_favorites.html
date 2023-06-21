@@ -1,0 +1,9 @@
+{% extends 'base.html' %}
+
+{% block title %}Produktas pridėtas{% endblock %}
+
+{% block content %}
+  <h1>Produktas pridėtas prie mėgstamų</h1>
+  <p>Produktas sėkmingai pridėtas prie mėgstamų.</p>
+  <a href="{% url 'products' %}" class="btn btn-success">Grįžti į produktų sąrašą</a>
+{% endblock %}

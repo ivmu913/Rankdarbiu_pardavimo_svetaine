@@ -19,13 +19,14 @@
               <p class="card-text">Kaina: {{ product.price }} EUR</p>
             </div>
           </a>
+          <div class="card-footer">
+            <a href="{% url 'add_to_favorites' product.id %}" class="btn btn-success">Pridėti prie mėgstamų</a>
+          </div>
         </div>
       </div>
     {% endfor %}
   </div>
 {% endblock %}
-
-
 
 
 

@@ -124,6 +124,11 @@
                         </a>
                     </li>
                     {% if user.is_authenticated %}
+                         <li class="nav-item">
+                            <a class="nav-link" href="{% url 'favorites' %}">
+                                <img src="{% static 'favorites.ico' %}" alt="Mėgstamiausi" class="nav-icon" style="font-weight: bold; color: black; width: 40px; height:40px;">
+                            </a>
+                        </li>
                         <li class="nav-item">
                             <a class="nav-link" href="{% url 'user_profile' %}">
                                 <img src="{% static 'user_icon.png' %}" alt="Vartotojo Profilis" class="nav-icon" style="font-weight: bold; color: black; width: 40px; height:40px;">
