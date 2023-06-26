@@ -99,7 +99,7 @@ def add_product(request):
             product = form.save(commit=False)
             product.owner = request.user
             product.save()
-            request.user.userprofile.user_products.add(product)  # Įdedama prekė į vartotojo profilio prekių sąrašą
+            request.user.userprofile.user_products.add(product)
             return redirect('user_profile')
     else:
         form = ProductForm()
@@ -290,7 +290,6 @@ def checkout(request):
         payment_success = process_payment(total_price, card_number, card_holder)
 
         if payment_success:
-            # Šalinti prekes iš krepšelio
             cart_items.delete()
             return redirect('payment_success')
         else:
