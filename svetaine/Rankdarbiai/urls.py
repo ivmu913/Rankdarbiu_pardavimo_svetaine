@@ -19,6 +19,7 @@ urlpatterns = [
     path('payment/', views.fake_payment, name='fake_payment'),
     path('payment/success/', views.payment_success, name='payment_success'),
     path('payment/failure/', views.payment_failure, name='payment_failure'),
+    path('process_payment/', views.process_payment, name='process_payment'),
     path('product/<int:product_id>/', views.product_detail, name='product_detail'),
     path('order/create/<int:product_id>/', views.create_order, name='create_order'),
     path('favorites/add/<int:product_id>/', views.add_to_favorites, name='add_to_favorites'),

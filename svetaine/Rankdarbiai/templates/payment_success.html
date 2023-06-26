@@ -1,12 +1,17 @@
 {% extends 'base.html' %}
 
-{% block title %}Mokėjimas sėkmingas{% endblock %}
+{% block title %}Apmokėjimas sėkmingas{% endblock %}
 
 {% block content %}
-    <div class="container">
-        <h1 class="mt-4 mb-3">Mokėjimas sėkmingas!</h1>
-
-        <p>Dėkojame, kad atlikote fiktyvų mokėjimą.</p>
+<div class="container">
+  <main>
+    <div class="py-5 text-center">
+      <h2>Apmokėjimas sėkmingas!</h2>
+      <p>Dėkojame, kad apsipirkote mūsų parduotuvėje.</p>
+      <a href="{% url 'home' %}" class="btn btn-success">Grįžti į pagrindinį puslapį</a>
     </div>
+  </main>
+</div>
 {% endblock %}
+
 

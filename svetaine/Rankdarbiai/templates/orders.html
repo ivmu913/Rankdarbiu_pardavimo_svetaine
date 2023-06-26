@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+
+{% block title %}Mano Užsakymai{% endblock %}
+
+{% block content %}
+    <h1 class="mt-4">Mano Užsakymai</h1>
+    <table class="table">
+        <thead>
+            <tr>
+                <th scope="col">Produktas</th>
+                <th scope="col">Kiekis</th>
+                <th scope="col">Kaina</th>
+                <th scope="col">Užsakymo laikas</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for order in orders %}
+            <tr>
+                <td>{{ order.product.title }}</td>
+                <td>{{ order.quantity }}</td>
+                <td>{{ order.total_price }}</td>
+                <td>{{ order.created_at }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

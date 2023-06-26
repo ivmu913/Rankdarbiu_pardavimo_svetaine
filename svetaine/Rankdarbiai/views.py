@@ -2,10 +2,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 from .models import Category, Product, Order, UserProfile, Review, Favorite, Cart, CartItem, Transaction, PromoCode
 from .forms import ProductForm, UserProfileForm, UserForm, ReviewForm
-from django.contrib.auth.forms import UserCreationForm
-from django.contrib.auth.forms import UserChangeForm
 from django.contrib import messages
-from django.http import HttpResponseRedirect
 from django.contrib.auth.models import User
 
 
@@ -53,7 +50,6 @@ def register(request):
 
     return render(request, 'register.html')
 
-
 def registration_success(request):
     return render(request, 'registration_success.html')
 
@@ -89,7 +85,6 @@ def edit_profile(request):
         'user_form': user_form,
         'profile_form': profile_form
     })
-
 
 
 def products(request):
@@ -202,8 +197,6 @@ def create_order(request, product_id):
 
 
 
-
-
 @login_required
 def cart(request):
     user_cart, created = Cart.objects.get_or_create(user=request.user)
@@ -224,12 +217,7 @@ def add_to_cart(request, product_id):
         cart_item.quantity += 1
     cart_item.save()
 
-    # pridėti pranešimą
-    # messages.success(request, "Jūsų prekė sėkmingai pridėta į krepšelį.")
-    # po to, kai prekė pridėta į krepšelį, nukreipia atgal į prekių sąrašą
     return redirect('products')
-    # nukreipia atgal į puslapį, iš kurio vartotojas atėjo
-    # return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
 @login_required
 def update_cart(request, product_id):
@@ -265,7 +253,25 @@ def remove_from_cart(request, product_id):
     cart_item.delete()
     return redirect('cart')
 
+@login_required
+def process_payment(request):
+    if request.method == 'POST':
+        name = request.POST.get('name')
+        email = request.POST.get('email')
+        address = request.POST.get('address')
+        city = request.POST.get('city')
+        state = request.POST.get('state')
+        card_holder = request.POST.get('card_holder')
+        card_number = request.POST.get('card_number')
+        expiration = request.POST.get('expiration')
+        cvv = request.POST.get('cvv')
 
+        if name and email and address and city and state and card_holder and card_number and expiration and cvv:
+            return redirect('payment_success')
+        else:
+            return redirect('payment_failure')
+    else:
+        return redirect('checkout')
 
 
 @login_required
@@ -277,6 +283,19 @@ def checkout(request):
         'cart_items': cart_items,
         'total_price': total_price,
     }
+
+    if request.method == 'POST':
+        card_number = request.POST.get('cc-number')
+        card_holder = request.POST.get('cc-name')
+        payment_success = process_payment(total_price, card_number, card_holder)
+
+        if payment_success:
+            # Šalinti prekes iš krepšelio
+            cart_items.delete()
+            return redirect('payment_success')
+        else:
+            return redirect('payment_failure')
+
     return render(request, 'checkout.html', context)
 
 
