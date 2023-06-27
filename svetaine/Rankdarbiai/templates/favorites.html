@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+
+{% block title %}Mėgstamiausi produktai{% endblock %}
+
+{% block content %}
+  <h1 class="text-center">Mėgstamiausi produktai</h1>
+
+  <div class="row">
+    {% for favorite in favorites %}
+      <div class="col-md-4">
+        <div class="card mb-4" style="background-color: #FFD966;">
+          <a href="{% url 'product_detail' favorite.product.id %}">
+            <div class="aspect-ratio">
+              <img src="{{ favorite.product.image.url }}" class="card-img-top img-fluid" alt="{{ favorite.product.title }}">
+            </div>
+            <div class="card-body" style="color: #000000;">
+              <h5 class="card-title">{{ favorite.product.title }}</h5>
+              <p class="card-text">Kaina: {{ favorite.product.price }} EUR</p>
+            </div>
+          </a>
+          <a href="{% url 'remove_from_favorites' favorite.product.id %}" class="btn btn-success">Pašalinti iš mėgstamiausių</a>
+        </div>
+      </div>
+    {% empty %}
+      <p>Jūsų mėgstamų produktų sąrašas yra tuščias.</p>
+    {% endfor %}
+  </div>
+{% endblock %}
+

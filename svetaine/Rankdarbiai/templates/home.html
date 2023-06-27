@@ -1,51 +1,57 @@
 {% extends 'base.html' %}
 
+{% load static %}
+
 {% block content %}
-  <div class="jumbotron" style="background-color: #FFD966;">
-    <img src="/static/imageonline-co-textimage.jpg" alt="Rankdarbių Parduotuvės logotipas" class="nav-icon" style="width: 1050px; height:650px;" >
-    <h1>Sveiki atvykę į Rankdarbių Parduotuvę!</h1>
-    <p>Esame didžiausia rankų darbo kūrinių rinkmena Lietuvoje.</p>
-    <a href="{% url 'products' %}" class="btn btn-success">Atraskite rankų darbo stebuklus</a>
-  </div>
-
-  <div class="row">
-    <div class="col-md-6" >
-      <h2>Kodėl rinktis rankų darbo kūrinius?</h2>
-      <p>Rankų darbo kūriniai yra unikalūs, sukuriami su meile ir dėmesiu smulkmenoms. Jie atspindi meistriškumą ir kūrėjo asmenybę.</p>
-    </div>
-    <div class="col-md-6" >
-      <h2>Mūsų paslaugos</h2>
-      <ul>
-        <li>Platus rankų darbo kūrinių pasirinkimas</li>
-        <li>Individualūs užsakymai ir asmeninės konsultacijos</li>
-        <li>Saugus ir patikimas pristatymas</li>
-      </ul>
+  <div class="jumbotron text-white bg-dark" style="background-image: url('{% static 'background.jpg' %}'); background-size: cover; padding: 2rem;">
+    <div class="container text-center">
+      <h1 class="display-2">Sveiki atvykę į Rankdarbių Parduotuvę!</h1>
+      <p class="lead">Esame didžiausia rankų darbo kūrinių rinkmena Lietuvoje.</p>
+      <p><a class="btn btn-success btn-lg" href="{% url 'products' %}" role="button">Atraskite rankų darbo stebuklus »</a></p>
     </div>
   </div>
 
-  <div class="row">
+  <div class="container mb-4">
+    <div class="row">
+      <div class="col-md-6">
+        <h2>Kodėl rinktis rankų darbo kūrinius?</h2>
+        <h5>Rankų darbo kūriniai yra unikalūs, sukuriami su meile ir dėmesiu smulkmenoms. Jie atspindi meistriškumą ir kūrėjo asmenybę.</h5>
+      </div>
+      <div class="col-md-6">
+        <h2>Mūsų paslaugos</h2>
+        <ul>
+          <h5>
+          <li>Platus rankų darbo kūrinių pasirinkimas</li>
+          <li>Individualūs užsakymai ir asmeninės konsultacijos</li>
+          <li>Saugus ir patikimas pristatymas</li>
+          </h5>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="container mb-4">
     <div class="col-md-12">
       <h2>Naujausi kūriniai</h2>
       <div id="carouselExampleControls" class="carousel slide" data-ride="carousel">
         <div class="carousel-inner">
           {% for product in latest_products %}
             <div class="carousel-item {% if forloop.first %}active{% endif %}">
-              <div class="card" style="background-color: #FFD966;">
+              <div class="card" style="width: 18rem; margin: auto;">
                 <img src="{{ product.image.url }}" class="card-img-top" alt="{{ product.title }}">
                 <div class="card-body">
-                </div>
-                <div class="card-footer d-flex justify-content-center">
-                  <a href="{% url 'product_detail' product.id %}" class="btn btn-primary">Detaliau</a>
+                  <h6 class="card-title text-center">{{ product.title }}</h6>
+                  <a href="{% url 'product_detail' product.id %}" class="btn btn-success btn-block">Detaliau</a>
                 </div>
               </div>
             </div>
           {% endfor %}
         </div>
-        <a class="carousel-control-prev" href="#carouselExampleControls" role="button" data-slide="prev" style="color: black;">
+        <a class="carousel-control-prev" href="#carouselExampleControls" role="button" data-slide="prev">
           <span class="carousel-control-prev-icon" aria-hidden="true"></span>
           <span class="sr-only">Previous</span>
         </a>
-        <a class="carousel-control-next" href="#carouselExampleControls" role="button" data-slide="next" style="color: black;">
+        <a class="carousel-control-next" href="#carouselExampleControls" role="button" data-slide="next">
           <span class="carousel-control-next-icon" aria-hidden="true"></span>
           <span class="sr-only">Next</span>
         </a>
@@ -53,7 +59,4 @@
     </div>
   </div>
 {% endblock %}
-
-
-
 

@@ -3,15 +3,62 @@
 {% block title %}Produkto Informacija{% endblock %}
 
 {% block content %}
-    <div class="card" style="background-color: #FFD966;">
-        <div class="card-header">
-            <h5 class="card-title">{{ product.title }}</h5>
-        </div>
-        <div class="card-body">
-            <p>{{ product.description }}</p>
-            <p>Kaina: {{ product.price }} EUR</p>
-            <p>Turimas kiekis: {{ product.quantity }} vnt.</p>
-            <a href="{% url 'add_to_cart' product.id %}" class="btn btn-primary">Įdėti į krepšelį</a>
+    <div class="card mb-3" style="background-color: #FFD966;">
+        <div class="row no-gutters">
+            <div class="col-md-4">
+                <img src="{{ product.image.url }}" class="card-img" alt="{{ product.title }}">
+            </div>
+            <div class="col-md-8">
+                <div class="card-body">
+                    <h5 class="card-title">{{ product.title }}</h5>
+                    <p>{{ product.description }}</p>
+                    <p>Kaina: {{ product.price }} EUR</p>
+                    <p>Turimas kiekis: {{ product.quantity }} vnt.</p>
+                    {% if product.seller %}
+                        <p>Pardavėjas: {{ product.seller.username }}</p>
+                    {% endif %}
+                    <div class="btn-group btn-group-justified">
+                        <a href="{% url 'add_to_favorites' product.id %}" class="btn btn-success">Įdėti į mėgstamus</a>
+                        <span style="margin: 0 5px;"></span>
+                        <a href="{% url 'add_to_cart' product.id %}" class="btn btn-success">Įdėti į krepšelį</a>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
+
+    <div class="card mt-3" style="background-color: #FFD966;">
+        <div class="card-header">
+            <h5 class="card-title">Atsiliepimai</h5>
+        </div>
+        <div class="card-body">
+            {% for review in reviews %}
+                <div class="card mt-3">
+                    <div class="card-body">
+                        <h6 class="card-title"><strong>{{ review.user.username }}</strong></h6>
+                        <p class="card-text">{{ review.text }}</p>
+                    </div>
+                </div>
+            {% empty %}
+                <p>Nėra atsiliepimų apie šį produktą.</p>
+            {% endfor %}
+        </div>
+    </div>
+
+    {% if request.user.is_authenticated %}
+        <div class="card mt-3" style="background-color: #FFD966;">
+            <div class="card-header">
+                <h5 class="card-title">Palikite atsiliepimą</h5>
+            </div>
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+                    {{ form.as_p }}
+                    <button type="submit" class="btn btn-success">Pridėti atsiliepimą</button>
+                </form>
+            </div>
+        </div>
+    {% endif %}
 {% endblock %}
+
+

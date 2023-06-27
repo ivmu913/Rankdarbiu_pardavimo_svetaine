@@ -1,6 +1,7 @@
 from django.contrib import admin
-from .models import Category, Product, Order, UserProfile, Review, Favorite, Cart, CartItem, Transaction
-
+from .models import Category, Product, UserProfile, Review, Favorite, Cart, CartItem
+from django.contrib.auth.models import User
+from django.contrib.auth.admin import UserAdmin
 
 @admin.register(Category)
 class CategoryAdmin(admin.ModelAdmin):
@@ -14,16 +15,21 @@ class ProductAdmin(admin.ModelAdmin):
     search_fields = ('title', 'description')
 
 
-@admin.register(Order)
-class OrderAdmin(admin.ModelAdmin):
-    list_display = ('id', 'product', 'buyer', 'quantity', 'total_price', 'created_at')
-    list_filter = ('created_at',)
-    search_fields = ('product__title', 'buyer__username')
 
 
 @admin.register(UserProfile)
 class UserProfileAdmin(admin.ModelAdmin):
     list_display = ('user', 'location')
+    actions = ['delete_selected_users']
+
+    def delete_selected_users(self, request, queryset):
+        for user_profile in queryset:
+            user_profile.user.delete()
+
+    delete_selected_users.short_description = "Ištrinti pasirinktus vartotojus"
+
+admin.site.unregister(User)
+admin.site.register(User, UserAdmin)
 
 
 @admin.register(Review)
@@ -45,10 +51,6 @@ class CartAdmin(admin.ModelAdmin):
 class CartItemAdmin(admin.ModelAdmin):
     list_display = ('cart', 'product', 'quantity')
 
-
-@admin.register(Transaction)
-class TransactionAdmin(admin.ModelAdmin):
-    list_display = ('id', 'buyer', 'total_price', 'created_at')
 
 
 

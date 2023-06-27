@@ -5,5 +5,9 @@
 {% block content %}
     <h1 class="mt-4">Pridėti prie mėgstamų</h1>
     <p>Paspauskite mygtuką, kad pridėtumėte šį produktą prie savo mėgstamų.</p>
-    <button class="btn btn-primary">Pridėti prie mėgstamų</button>
+    <form method="POST" action="{% url 'add_to_favorites' %}">
+        {% csrf_token %}
+        <input type="hidden" name="product" value="{{ product.id }}">
+        <button type="submit" class="btn btn-primary">Pridėti prie mėgstamų</button>
+    </form>
 {% endblock %}

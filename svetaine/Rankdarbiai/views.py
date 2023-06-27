@@ -1,12 +1,10 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
-from .models import Category, Product, Order, UserProfile, Review, Favorite, Cart, CartItem, Transaction, PromoCode
-from .forms import ProductForm, UserProfileForm, UserForm
-from django.contrib.auth.forms import UserCreationForm
-from django.contrib.auth.forms import UserChangeForm
+from .models import Category, Product, UserProfile, Review, Favorite, Cart, CartItem, PromoCode
+from .forms import ProductForm, UserProfileForm, UserForm, ReviewForm
 from django.contrib import messages
-from django.http import HttpResponseRedirect
 from django.contrib.auth.models import User
+from django.contrib.auth.hashers import make_password
 
 
 def home(request):
@@ -21,48 +19,53 @@ def home(request):
 def about(request):
     return render(request, 'about.html')
 
+
 def contact(request):
+    if request.method == 'POST':
+        created = True
+
+        if created:
+            messages.success(request, f'Jūsų užklausa sėkmingai išsiųsta. Mes su jumis susisieksime artimiausiu metu.')
+        else:
+            messages.info(request, f'Užpildykite visus laukus.')
+
     return render(request, 'contact.html')
 
 
-def register(request):
+def create_user(request):
     if request.method == 'POST':
-        username = request.POST.get('username')
-        email = request.POST.get('email')
-        password = request.POST.get('password')
-        password2 = request.POST.get('confirm_password')
+        user_form = UserForm(request.POST)
+        profile_form = UserProfileForm(request.POST, request.FILES)
+        if user_form.is_valid() and profile_form.is_valid():
+            user = user_form.save(commit=False)
+            user.password = make_password(user_form.cleaned_data['password'], hasher='pbkdf2_sha256')
+            user.save()
+            profile = profile_form.save(commit=False)
+            profile.user = user
+            profile.save()
 
-        if password == password2:
-            if User.objects.filter(username=username).exists():
-                messages.error(request, f'Vartotojo vardas {username} užimtas!')
-                return redirect('register')
-            elif User.objects.filter(email=email).exists():
-                messages.error(request, f'Vartotojas su el. paštu {email} jau užregistruotas!')
-                return redirect('register')
-            else:
-                # Use create_user method to encrypt password
-                user = User.objects.create_user(username=username, email=email, password=password)
 
-                # Create a user profile for the new user
-                profile = UserProfile(user=user)
-                profile.save()
-
-                messages.success(request, f'Vartotojas {username} sėkmingai užregistruotas!')
-                return redirect('registration_success')
-        else:
-            messages.error(request, 'Slaptažodžiai nesutampa!')
-            return redirect('register')
-
-    return render(request, 'register.html')
-
+            return redirect('registration_success')
+    else:
+        user_form = UserForm()
+        profile_form = UserProfileForm()
+    return render(request, 'register.html', {
+        'user_form': user_form,
+        'profile_form': profile_form,
+    })
 
 def registration_success(request):
     return render(request, 'registration_success.html')
 
+def save_user_profile(sender, instance, created, **kwargs):
+    if created:
+        instance.profile = UserProfile(user=instance)
+        instance.profile.save()
+
 @login_required
 def user_profile(request):
     user_profile = get_object_or_404(UserProfile, user=request.user)
-    user_products = user_profile.user_products.all()  # Gauti įdėtas prekes
+    user_products = user_profile.user_products.all()
     context = {
         'user_profile': user_profile,
         'user_products': user_products
@@ -93,7 +96,6 @@ def edit_profile(request):
     })
 
 
-
 def products(request):
     products = Product.objects.all()
     return render(request, 'products.html', {'products': products})
@@ -106,11 +108,30 @@ def add_product(request):
             product = form.save(commit=False)
             product.owner = request.user
             product.save()
-            request.user.userprofile.user_products.add(product)  # Įdedama prekė į vartotojo profilio prekių sąrašą
+            request.user.userprofile.user_products.add(product)
             return redirect('user_profile')
     else:
         form = ProductForm()
     return render(request, 'add_product.html', {'form': form})
+
+def product_detail(request, product_id):
+    product = get_object_or_404(Product, id=product_id)
+    reviews = Review.objects.filter(product=product)
+    if request.method == 'POST':
+        form = ReviewForm(request.POST)
+        if form.is_valid():
+            new_review = form.save(commit=False)
+            new_review.product = product
+            new_review.user = request.user
+            new_review.save()
+    else:
+        form = ReviewForm()
+    context = {
+        'product': product,
+        'reviews': reviews,
+        'form': form
+    }
+    return render(request, 'product_detail.html', context)
 
 @login_required
 def edit_product(request, product_id):
@@ -149,39 +170,28 @@ def all_categories(request):
     categories = Category.objects.all()
     return render(request, 'categories.html', {'categories': categories})
 
-
-def product_detail(request, product_id):
-    product = get_object_or_404(Product, id=product_id)
-    reviews = Review.objects.filter(product=product)
-    context = {
-        'product': product,
-        'reviews': reviews
-    }
-    return render(request, 'product_detail.html', context)
-
-
-
 @login_required
-def create_order(request, product_id):
-    product = get_object_or_404(Product, id=product_id)
-    if request.method == 'POST':
-        quantity = int(request.POST.get('quantity', 1))
-        total_price = product.price * quantity
-        order = Order.objects.create(product=product, buyer=request.user, quantity=quantity, total_price=total_price)
-        return render(request, 'order_confirmation.html', {'order': order})
-    else:
-        return render(request, 'create_order.html', {'product': product})
-
+def favorites(request):
+    favorites = Favorite.objects.filter(user=request.user).select_related('product')
+    return render(request, 'favorites.html', {'favorites': favorites})
 
 @login_required
 def add_to_favorites(request, product_id):
+    user = request.user
     product = get_object_or_404(Product, id=product_id)
-    favorite, created = Favorite.objects.get_or_create(user=request.user, product=product)
+    favorite, created = Favorite.objects.get_or_create(user=user, product=product)
+
     if created:
-        message = 'Prekė sėkmingai pridėta į mėgstamiausius'
+        messages.success(request, f'Produktas "{product.title}" buvo pridėtas prie mėgstamiausių.')
     else:
-        message = 'Prekė jau yra jūsų mėgstamiausių sąraše'
-    return render(request, 'add_to_favorites.html', {'message': message})
+        messages.info(request, f'Produktas "{product.title}" jau yra jūsų mėgstamųjų sąraše.')
+
+    return redirect('products')
+
+@login_required
+def remove_from_favorites(request, product_id):
+    Favorite.objects.filter(user=request.user, product_id=product_id).delete()
+    return redirect('favorites')
 
 
 @login_required
@@ -204,12 +214,12 @@ def add_to_cart(request, product_id):
         cart_item.quantity += 1
     cart_item.save()
 
-    # pridėti pranešimą
-    # messages.success(request, "Jūsų prekė sėkmingai pridėta į krepšelį.")
-    # po to, kai prekė pridėta į krepšelį, nukreipia atgal į prekių sąrašą
+    if created:
+        messages.success(request, f'Produktas "{product.title}" buvo įdėtas į krepšelį.')
+    else:
+        messages.info(request, f'Produktas "{product.title}" jau yra įdėtas į krepšelį.')
+
     return redirect('products')
-    # nukreipia atgal į puslapį, iš kurio vartotojas atėjo
-    # return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
 @login_required
 def update_cart(request, product_id):
@@ -239,13 +249,31 @@ def apply_promo_code(request):
 
 @login_required
 def remove_from_cart(request, product_id):
-    cart = Cart.objects.get(user=request.user)  # Gaukite vartotojo krepšelį
-    product = get_object_or_404(Product, id=product_id)  # Raskite produktą pagal ID
-    cart_item = CartItem.objects.get(cart=cart, product=product)  # Raskite prekę krepšelyje
-    cart_item.delete()  # Pašalinkite prekę iš krepšelio
-    return redirect('cart')  # Grįžkite į krepšelio puslapį
+    cart = Cart.objects.get(user=request.user)
+    product = get_object_or_404(Product, id=product_id)
+    cart_item = CartItem.objects.get(cart=cart, product=product)
+    cart_item.delete()
+    return redirect('cart')
 
+@login_required
+def process_payment(request):
+    if request.method == 'POST':
+        name = request.POST.get('name')
+        email = request.POST.get('email')
+        address = request.POST.get('address')
+        city = request.POST.get('city')
+        state = request.POST.get('state')
+        card_holder = request.POST.get('card_holder')
+        card_number = request.POST.get('card_number')
+        expiration = request.POST.get('expiration')
+        cvv = request.POST.get('cvv')
 
+        if name and email and address and city and state and card_holder and card_number and expiration and cvv:
+            return redirect('payment_success')
+        else:
+            return redirect('payment_failure')
+    else:
+        return redirect('checkout')
 
 
 @login_required
@@ -257,6 +285,18 @@ def checkout(request):
         'cart_items': cart_items,
         'total_price': total_price,
     }
+
+    if request.method == 'POST':
+        card_number = request.POST.get('cc-number')
+        card_holder = request.POST.get('cc-name')
+        payment_success = process_payment(total_price, card_number, card_holder)
+
+        if payment_success:
+            user_cart.clear()
+            return redirect('payment_success')
+        else:
+            return redirect('payment_failure')
+
     return render(request, 'checkout.html', context)
 
 
@@ -284,4 +324,13 @@ def payment_failure(request):
     return render(request, 'payment_failure.html')
 
 def help(request):
+    if request.method == 'POST':
+        created = True
+
+        if created:
+            messages.success(request, f'Jūsų užklausa sėkmingai išsiųsta. Mes su jumis susisieksime artimiausiu metu.')
+        else:
+            messages.info(request, f'Užpildykite visus laukus.')
+
     return render(request, 'help.html')
+

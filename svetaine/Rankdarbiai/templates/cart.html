@@ -1,6 +1,5 @@
 {% extends 'base.html' %}
 
-
 {% block title %}Krepšelis{% endblock %}
 
 {% load multiply %}
@@ -45,10 +44,8 @@
 
         <p class="lead">Bendra suma: {{ total_price }}</p>
 
-        <form action="{% url 'checkout' %}" method="POST">
-            {% csrf_token %}
-            <button class="btn btn-primary" type="submit">Apmokėti</button>
-        </form>
+        <a href="{% url 'checkout' %}" class="btn btn-success">Apmokėti</a>
     </div>
 {% endblock %}
+
 

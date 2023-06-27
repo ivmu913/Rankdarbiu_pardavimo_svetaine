@@ -3,26 +3,41 @@
 {% block title %}Produktai{% endblock %}
 
 {% block content %}
-  <h1>Mūsų kūriniai</h1>
+  <h1 class="text-center">Mūsų kūriniai</h1>
+
+  {% if messages %}
+    {% for message in messages %}
+      <div class="alert alert-{{ message.tags }}">
+        {{ message }}
+      </div>
+    {% endfor %}
+  {% endif %}
 
   <div class="row">
     {% for product in products %}
       <div class="col-md-4">
         <div class="card mb-4" style="background-color: #FFD966;">
           <a href="{% url 'product_detail' product.id %}">
-            <img src="{{ product.image.url }}" class="card-img-top" alt="{{ product.title }}">
+            <div class="aspect-ratio">
+              <img src="{{ product.image.url }}" class="card-img-top img-fluid" alt="{{ product.title }}">
+            </div>
             <div class="card-body" style="color: #000000;">
               <h5 class="card-title">{{ product.title }}</h5>
-              <p class="card-text">{{ product.description }}</p>
               <p class="card-text">Kaina: {{ product.price }} EUR</p>
             </div>
           </a>
+          <div class="card-footer">
+            <div class="btn-group btn-group-justified">
+              <a href="{% url 'add_to_favorites' product.id %}" class="btn btn-success">Įdėti į mėgstamus</a>
+               <span style="margin: 0 5px;"></span>
+              <a href="{% url 'add_to_cart' product.id %}" class="btn btn-success">Įdėti į krepšelį</a>
+            </div>
+          </div>
         </div>
       </div>
     {% endfor %}
   </div>
 {% endblock %}
-
 
 
 
