@@ -1,6 +1,6 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
-from .models import Category, Product, Order, UserProfile, Review, Favorite, Cart, CartItem, Transaction, PromoCode
+from .models import Category, Product, UserProfile, Review, Favorite, Cart, CartItem, Transaction, PromoCode
 from .forms import ProductForm, UserProfileForm, UserForm, ReviewForm
 from django.contrib import messages
 from django.contrib.auth.models import User
@@ -184,18 +184,6 @@ def remove_from_favorites(request, product_id):
     Favorite.objects.filter(user=request.user, product_id=product_id).delete()
     return redirect('favorites')
 
-@login_required
-def create_order(request, product_id):
-    product = get_object_or_404(Product, id=product_id)
-    if request.method == 'POST':
-        quantity = int(request.POST.get('quantity', 1))
-        total_price = product.price * quantity
-        order = Order.objects.create(product=product, buyer=request.user, quantity=quantity, total_price=total_price)
-        return render(request, 'order_confirmation.html', {'order': order})
-    else:
-        return render(request, 'create_order.html', {'product': product})
-
-
 
 @login_required
 def cart(request):
@@ -216,6 +204,11 @@ def add_to_cart(request, product_id):
     else:
         cart_item.quantity += 1
     cart_item.save()
+
+    if created:
+        messages.success(request, f'Produktas "{product.title}" buvo įdėtas į krepšelį.')
+    else:
+        messages.info(request, f'Produktas "{product.title}" jau yra įdėtas į krepšelį.')
 
     return redirect('products')
 

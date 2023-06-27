@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Category, Product, Order, UserProfile, Review, Favorite, Cart, CartItem, Transaction
+from .models import Category, Product, UserProfile, Review, Favorite, Cart, CartItem, Transaction
 from django.contrib.auth.models import User
 from django.contrib.auth.admin import UserAdmin
 
@@ -15,11 +15,6 @@ class ProductAdmin(admin.ModelAdmin):
     search_fields = ('title', 'description')
 
 
-@admin.register(Order)
-class OrderAdmin(admin.ModelAdmin):
-    list_display = ('id', 'product', 'buyer', 'quantity', 'total_price', 'created_at')
-    list_filter = ('created_at',)
-    search_fields = ('product__title', 'buyer__username')
 
 
 @admin.register(UserProfile)

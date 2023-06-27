@@ -7,7 +7,7 @@
     <p>Paspauskite mygtuką, kad pridėtumėte šį produktą prie savo mėgstamų.</p>
     <form method="POST" action="{% url 'add_to_favorites' %}">
         {% csrf_token %}
-        <input type="hidden" name="product" value="{{ product.id }}"> <!-- You'll need to pass the product id here -->
+        <input type="hidden" name="product" value="{{ product.id }}">
         <button type="submit" class="btn btn-primary">Pridėti prie mėgstamų</button>
     </form>
 {% endblock %}
