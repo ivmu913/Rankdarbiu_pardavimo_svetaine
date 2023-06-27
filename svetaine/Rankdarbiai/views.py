@@ -19,7 +19,16 @@ def home(request):
 def about(request):
     return render(request, 'about.html')
 
+
 def contact(request):
+    if request.method == 'POST':
+        created = True
+
+        if created:
+            messages.success(request, f'Jūsų užklausa sėkmingai išsiųsta. Mes su jumis susisieksime artimiausiu metu.')
+        else:
+            messages.info(request, f'Užpildykite visus laukus.')
+
     return render(request, 'contact.html')
 
 
@@ -315,5 +324,13 @@ def payment_failure(request):
     return render(request, 'payment_failure.html')
 
 def help(request):
+    if request.method == 'POST':
+        created = True
+
+        if created:
+            messages.success(request, f'Jūsų užklausa sėkmingai išsiųsta. Mes su jumis susisieksime artimiausiu metu.')
+        else:
+            messages.info(request, f'Užpildykite visus laukus.')
+
     return render(request, 'help.html')
 

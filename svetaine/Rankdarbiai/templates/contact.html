@@ -3,33 +3,44 @@
 {% block title %}Kontaktai{% endblock %}
 
 {% block content %}
-    <h1 class="mt-4">Kontaktai</h1>
-    <p>Jei turite klausimų ar norite su mumis susisiekti, prašome užpildyti žemiau esančią formą arba naudoti kitus pateiktus kontaktinius duomenis.</p>
-    <form>
-        <div class="form-group">
-            <label for="name">Vardas</label>
-            <input type="text" class="form-control" id="name" placeholder="Įveskite savo vardą">
-        </div>
-        <div class="form-group">
-            <label for="email">El. paštas</label>
-            <input type="email" class="form-control" id="email" placeholder="Įveskite savo el. paštą">
-        </div>
-        <div class="form-group">
-            <label for="message">Žinutė</label>
-            <textarea class="form-control" id="message" rows="5" placeholder="Įveskite savo žinutę"></textarea>
-        </div>
-        <button type="submit" class="btn btn-success">Siųsti</button>
-    </form>
-    <hr>
-    <p>Papildomi kontaktiniai duomenys:</p>
-    <ul>
-        <li>Telefonas: +370 12345678</li>
-        <li>El. paštas: info@example.com</li>
-        <li>Adresas: 123 gatvė, Vilnius, Lietuva</li>
-    </ul>
-    <hr>
-    <h2>Mūsų adresas</h2>
-    <div class="map-responsive">
-        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2304.2186548910184!2d25.279651315497196!3d54.68704597827677!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x46dd94674a5db6ad%3A0x400cfcd68f2fe30!2sVilnius!5e0!3m2!1sen!2slt!4v1431512794796" width="600" height="450" frameborder="0" style="border:0" allowfullscreen></iframe>
+  <h1 class="mt-4">Kontaktai</h1>
+
+  {% if messages %}
+    {% for message in messages %}
+      <div class="alert alert-{{ message.tags }}">
+        {{ message }}
+      </div>
+    {% endfor %}
+  {% endif %}
+
+  <p>Jei turite klausimų ar norite su mumis susisiekti, prašome užpildyti žemiau esančią formą arba naudoti kitus pateiktus kontaktinius duomenis.</p>
+  <form method="POST">
+    {% csrf_token %}
+    <div class="form-group">
+      <label for="name">Vardas</label>
+      <input type="text" class="form-control" id="name" name="name" placeholder="Įveskite savo vardą">
     </div>
+    <div class="form-group">
+      <label for="email">El. paštas</label>
+      <input type="email" class="form-control" id="email" name="email" placeholder="Įveskite savo el. paštą">
+    </div>
+    <div class="form-group">
+      <label for="message">Žinutė</label>
+      <textarea class="form-control" id="message" name="message" rows="5" placeholder="Įveskite savo žinutę"></textarea>
+    </div>
+    <button type="submit" class="btn btn-success">Siųsti</button>
+  </form>
+  <hr>
+  <p>Papildomi kontaktiniai duomenys:</p>
+  <ul>
+    <li>Telefonas: +370 12345678</li>
+    <li>El. paštas: info@example.com</li>
+    <li>Adresas: 123 gatvė, Vilnius, Lietuva</li>
+  </ul>
+  <hr>
+  <h2>Mūsų adresas</h2>
+  <div class="map-responsive">
+    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2304.2186548910184!2d25.279651315497196!3d54.68704597827677!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x46dd94674a5db6ad%3A0x400cfcd68f2fe30!2sVilnius!5e0!3m2!1sen!2slt!4v1431512794796" width="600" height="450" frameborder="0" style="border:0" allowfullscreen></iframe>
+  </div>
 {% endblock %}
+
