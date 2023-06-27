@@ -1,6 +1,7 @@
 from django.contrib import admin
 from .models import Category, Product, Order, UserProfile, Review, Favorite, Cart, CartItem, Transaction
-
+from django.contrib.auth.models import User
+from django.contrib.auth.admin import UserAdmin
 
 @admin.register(Category)
 class CategoryAdmin(admin.ModelAdmin):
@@ -24,6 +25,16 @@ class OrderAdmin(admin.ModelAdmin):
 @admin.register(UserProfile)
 class UserProfileAdmin(admin.ModelAdmin):
     list_display = ('user', 'location')
+    actions = ['delete_selected_users']
+
+    def delete_selected_users(self, request, queryset):
+        for user_profile in queryset:
+            user_profile.user.delete()
+
+    delete_selected_users.short_description = "Ištrinti pasirinktus vartotojus"
+
+admin.site.unregister(User)
+admin.site.register(User, UserAdmin)
 
 
 @admin.register(Review)

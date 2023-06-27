@@ -4,6 +4,7 @@ from .models import Category, Product, Order, UserProfile, Review, Favorite, Car
 from .forms import ProductForm, UserProfileForm, UserForm, ReviewForm
 from django.contrib import messages
 from django.contrib.auth.models import User
+from django.contrib.auth.hashers import make_password
 
 
 def home(request):
@@ -22,41 +23,40 @@ def contact(request):
     return render(request, 'contact.html')
 
 
-def register(request):
+def create_user(request):
     if request.method == 'POST':
-        username = request.POST.get('username')
-        email = request.POST.get('email')
-        password = request.POST.get('password')
-        password2 = request.POST.get('confirm_password')
+        user_form = UserForm(request.POST)
+        profile_form = UserProfileForm(request.POST, request.FILES)
+        if user_form.is_valid() and profile_form.is_valid():
+            user = user_form.save(commit=False)
+            user.password = make_password(user_form.cleaned_data['password'], hasher='pbkdf2_sha256')
+            user.save()
+            profile = profile_form.save(commit=False)
+            profile.user = user
+            profile.save()
 
-        if password == password2:
-            if User.objects.filter(username=username).exists():
-                messages.error(request, f'Vartotojo vardas {username} užimtas!')
-                return redirect('register')
-            elif User.objects.filter(email=email).exists():
-                messages.error(request, f'Vartotojas su el. paštu {email} jau užregistruotas!')
-                return redirect('register')
-            else:
-                user = User.objects.create_user(username=username, email=email, password=password)
 
-                profile = UserProfile(user=user)
-                profile.save()
-
-                messages.success(request, f'Vartotojas {username} sėkmingai užregistruotas!')
-                return redirect('registration_success')
-        else:
-            messages.error(request, 'Slaptažodžiai nesutampa!')
-            return redirect('register')
-
-    return render(request, 'register.html')
+            return redirect('registration_success')
+    else:
+        user_form = UserForm()
+        profile_form = UserProfileForm()
+    return render(request, 'register.html', {
+        'user_form': user_form,
+        'profile_form': profile_form,
+    })
 
 def registration_success(request):
     return render(request, 'registration_success.html')
 
+def save_user_profile(sender, instance, created, **kwargs):
+    if created:
+        instance.profile = UserProfile(user=instance)
+        instance.profile.save()
+
 @login_required
 def user_profile(request):
     user_profile = get_object_or_404(UserProfile, user=request.user)
-    user_products = user_profile.user_products.all()  # Gauti įdėtas prekes
+    user_products = user_profile.user_products.all()
     context = {
         'user_profile': user_profile,
         'user_products': user_products

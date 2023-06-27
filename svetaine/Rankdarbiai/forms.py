@@ -18,13 +18,17 @@ class ProductForm(forms.ModelForm):
 
 
 class UserForm(forms.ModelForm):
+    password = forms.CharField(widget=forms.PasswordInput)
+    confirm_password = forms.CharField(widget=forms.PasswordInput)
+
     class Meta:
         model = User
-        fields = ['first_name', 'last_name', 'email']
+        fields = ['username', 'email', 'password', 'confirm_password']
         widgets = {
-            'first_name': forms.TextInput(attrs={'class': 'form-control'}),
-            'last_name': forms.TextInput(attrs={'class': 'form-control'}),
+            'username': forms.TextInput(attrs={'class': 'form-control'}),
             'email': forms.EmailInput(attrs={'class': 'form-control'}),
+            'password': forms.PasswordInput(attrs={'class': 'form-control'}),
+            'confirm_password': forms.PasswordInput(attrs={'class': 'form-control'}),
         }
 
 class UserProfileForm(forms.ModelForm):
