@@ -1,6 +1,6 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
-from .models import Category, Product, UserProfile, Review, Favorite, Cart, CartItem, Transaction, PromoCode
+from .models import Category, Product, UserProfile, Review, Favorite, Cart, CartItem, PromoCode
 from .forms import ProductForm, UserProfileForm, UserForm, ReviewForm
 from django.contrib import messages
 from django.contrib.auth.models import User
@@ -292,7 +292,7 @@ def checkout(request):
         payment_success = process_payment(total_price, card_number, card_holder)
 
         if payment_success:
-            cart_items.delete()
+            user_cart.clear()
             return redirect('payment_success')
         else:
             return redirect('payment_failure')

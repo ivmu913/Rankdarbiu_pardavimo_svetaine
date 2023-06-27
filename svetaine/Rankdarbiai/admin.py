@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Category, Product, UserProfile, Review, Favorite, Cart, CartItem, Transaction
+from .models import Category, Product, UserProfile, Review, Favorite, Cart, CartItem
 from django.contrib.auth.models import User
 from django.contrib.auth.admin import UserAdmin
 
@@ -51,10 +51,6 @@ class CartAdmin(admin.ModelAdmin):
 class CartItemAdmin(admin.ModelAdmin):
     list_display = ('cart', 'product', 'quantity')
 
-
-@admin.register(Transaction)
-class TransactionAdmin(admin.ModelAdmin):
-    list_display = ('id', 'buyer', 'total_price', 'created_at')
 
 
 
